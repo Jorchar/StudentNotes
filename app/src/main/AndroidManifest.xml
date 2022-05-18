@@ -11,6 +11,7 @@
         android:theme="@style/Theme.StudentNotes">
         <activity
             android:name=".CreateSubjectActivity"
+            android:parentActivityName=".MainActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

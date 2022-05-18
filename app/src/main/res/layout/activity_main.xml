@@ -12,13 +12,17 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:width="80dp"
+        android:height="80dp"
+        android:background="@drawable/round_button"
         android:onClick="CreateNewSubject"
-        android:text="Button"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="@string/plus_button" />
 
     <ScrollView
-        android:layout_width="409dp"
+        android:id="@+id/ScrollViewSubjects"
+        android:layout_width="0dp"
         android:layout_height="665dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,7 +32,34 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="30sp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"/>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    app:cardCornerRadius="15dp"
+                    app:cardElevation="5dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_margin="10dp">
+                </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="5dp"
+                android:layout_marginStart="16dp"
+                android:layout_margin="10dp">
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
