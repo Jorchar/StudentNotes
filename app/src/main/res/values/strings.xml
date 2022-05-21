@@ -4,4 +4,5 @@
     <string name="subject_name_hint">Type in subject name</string>
     <string name="subject_desc_hint">Type in subject description</string>
     <string name="create_subject_button">CREATE SUBJECT</string>
+    <string name="subject_background">Subject_Background</string>
 </resources>
