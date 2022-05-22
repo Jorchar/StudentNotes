@@ -2,15 +2,12 @@ package com.jkucharski.studentnotes;
 
 import android.media.Image;
 
-public class SubjectDC {
+public class NoteDC {
     String name;
-    String description;
     Image background;
 
-
-    public SubjectDC(String name, String description) {
+    public NoteDC(String name) {
         super();
         this.name = name;
-        this.description = description;
     }
 }

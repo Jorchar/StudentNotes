@@ -37,7 +37,7 @@ public class CreateSubjectFragment extends Fragment {
                 String subjectName = subjectNameET.getText().toString();
                 String subjectDesc = subjectDescET.getText().toString();
 
-                SubjectAdapter subjectAdapter = new SubjectAdapter();
+                SubjectAdapter subjectAdapter = new SubjectAdapter(fm);
                 subjectAdapter.addSubject(subjectName, subjectDesc);
 
                 subjectListFragment = new SubjectListFragment(fm);

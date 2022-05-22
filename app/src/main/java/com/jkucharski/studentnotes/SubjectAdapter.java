@@ -1,6 +1,5 @@
 package com.jkucharski.studentnotes;
 
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,8 @@ import android.transition.TransitionManager;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -21,6 +22,11 @@ import java.util.List;
 public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectVH> {
 
     static List<SubjectDC> subjectDC = new ArrayList<>();
+    FragmentManager fm;
+
+    SubjectAdapter(FragmentManager fm){
+        this.fm = fm;
+    }
 
     @NonNull
     @Override
@@ -35,11 +41,21 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
         holder.subjectNameTV.setText(subjectDC.get(position).name);
         holder.subjectDescTV.setText(subjectDC.get(position).description);
 
+        holder.subjectBackground.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NotesListFragment notesListFragment = new NotesListFragment(fm);
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.MainLayout, notesListFragment);
+                ft.commit();
+            }
+        });
+
         holder.expandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (holder.hiddenSubjectView.getVisibility() == View.VISIBLE) {
-                    TransitionManager.beginDelayedTransition(holder.cardView,
+                    TransitionManager.beginDelayedTransition(holder.subjectCardView,
                             new AutoTransition());
                     holder.hiddenSubjectView.setVisibility(View.GONE);
                     holder.expandButton.setImageResource(R.drawable.ic_baseline_expand_more_24);
@@ -47,7 +63,7 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
 
                 else {
 
-                    TransitionManager.beginDelayedTransition(holder.cardView,
+                    TransitionManager.beginDelayedTransition(holder.subjectCardView,
                             new AutoTransition());
                     holder.hiddenSubjectView.setVisibility(View.VISIBLE);
                     holder.expandButton.setImageResource(R.drawable.ic_baseline_expand_less_24);
@@ -68,7 +84,7 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
         TextView subjectDescTV;
         ImageButton expandButton;
         LinearLayout hiddenSubjectView;
-        CardView cardView;
+        CardView subjectCardView;
         ImageView subjectBackground;
 
         public SubjectVH(@NonNull View itemView) {
@@ -77,7 +93,7 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
             subjectDescTV = itemView.findViewById(R.id.subjectDescriptionTV);
             expandButton = itemView.findViewById(R.id.expandButton);
             hiddenSubjectView = itemView.findViewById(R.id.hiddenSubjectView);
-            cardView = itemView.findViewById(R.id.cardView);
+            subjectCardView = itemView.findViewById(R.id.subjectCardView);
             subjectBackground = itemView.findViewById(R.id.subjectImageBG);
         }
     }
