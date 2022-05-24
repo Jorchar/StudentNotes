@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1085784694021",
+    "project_id": "notes-with-text-recognition",
+    "storage_bucket": "notes-with-text-recognition.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1085784694021:android:6e74de8e9fbe7410432b6c",
+        "android_client_info": {
+          "package_name": "com.jkucharski.studentnotes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1085784694021-bb3o09o4t4dgf7t1k19adpcp2ov50aen.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3fx6Z5r__-9HMUPJ2HRPgIpU8s3J2_40"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1085784694021-bb3o09o4t4dgf7t1k19adpcp2ov50aen.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

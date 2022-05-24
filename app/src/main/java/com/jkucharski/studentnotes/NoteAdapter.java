@@ -1,6 +1,8 @@
 package com.jkucharski.studentnotes;
 
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+
+import java.io.File;
 import java.io.FileOutputStream;
 
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -38,6 +41,15 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
     @Override
     public void onBindViewHolder(@NonNull NoteVH holder, int position) {
         holder.noteNameTV.setText(noteDC.get(position).name);
+        holder.noteBackground.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NoteEditorFragment noteEditorFragment = new NoteEditorFragment(fm, noteDC.get(holder.getAdapterPosition()).name);
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.MainLayout, noteEditorFragment);
+                ft.commit();
+            }
+        });
     }
 
     @Override
@@ -61,14 +73,15 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
     }
     public void addNote(String name){
         noteDC.add(new NoteDC(name));
-
+        createNoteDocument(name);
         notifyItemInserted(noteDC.size()-1);
+        //TODO compare noteDC list to existing .docx files
     }
 
     public void createNoteDocument(String name){
-        XWPFDocument document = new XWPFDocument();
         try{
-            FileOutputStream outputStream = new FileOutputStream(name+".docx");
+            XWPFDocument document = new XWPFDocument();
+            FileOutputStream outputStream = new FileOutputStream("test.docx");
             document.write(outputStream);
             outputStream.close();
         }catch (Exception e){
