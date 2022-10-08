@@ -7,13 +7,44 @@
     android:layout_height="match_parent"
     tools:context=".NoteEditorFragment">
 
+    <TextView
+        android:id="@+id/preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_x="171dp"
+        android:layout_y="207dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/ocrButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <jp.wasabeef.richeditor.RichEditor
+        android:id="@+id/textEditor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints">
+
+    </jp.wasabeef.richeditor.RichEditor>
+
     <Button
         android:id="@+id/ocrButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Use OCR"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/setBold"
+        android:layout_width="300px"
+        android:layout_height="300px"
+        android:text="bold"
+        app:layout_constraintBottom_toTopOf="@+id/ocrButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+    </Button>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
