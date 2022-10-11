@@ -53,7 +53,7 @@ public class NotesListFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         noteName = input.getText().toString();
-                        noteAdapter.addNote(noteName);
+                        noteAdapter.addNote(noteName, getContext());
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

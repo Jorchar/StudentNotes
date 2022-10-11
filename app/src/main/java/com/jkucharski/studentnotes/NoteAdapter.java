@@ -3,8 +3,11 @@ package com.jkucharski.studentnotes;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
+import android.content.Context;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +44,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
 
     @Override
     public void onBindViewHolder(@NonNull NoteVH holder, int position) {
+        //holder.noteNameTV.setText(noteDC.get(position).name);
         holder.noteNameTV.setText(noteDC.get(position).name);
         holder.noteBackground.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,21 +76,25 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
             noteBackground = itemView.findViewById(R.id.noteImageBG);
         }
     }
-    public void addNote(String name){
+    public void addNote(String name, Context context){
         noteDC.add(new NoteDC(name));
-        createNoteDocument(name);
+        String test = context.getExternalFilesDir("Notes").toString();
+        createNoteDocument(name, context);
         notifyItemInserted(noteDC.size()-1);
-        //TODO compare noteDC list to existing .docx files
+        //TODO compare noteDC list to existing files
     }
 
-    public void createNoteDocument(String name){
-        try{
-            XWPFDocument document = new XWPFDocument();
-            FileOutputStream outputStream = new FileOutputStream("test.docx");
-            document.write(outputStream);
-            outputStream.close();
-        }catch (Exception e){
+    public void createNoteDocument(String name, Context context){
+        File extStudentNoteFile = new File(context.getExternalFilesDir("Notes"), name +  ".html");
+        FileOutputStream fileOutputStream;
+        try {
+            fileOutputStream = new FileOutputStream(extStudentNoteFile);
+            fileOutputStream.write("lol".trim().getBytes());
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
         }
     }
 }
