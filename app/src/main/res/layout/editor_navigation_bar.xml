@@ -7,156 +7,170 @@
 
     <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="wrap_content"
-            android:layout_height="70dp"
+            android:layout_height="match_parent"
+            android:background="#8758DB"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/action_undo"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="undo" />
 
             <Button
                 android:id="@+id/action_redo"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="redo" />
+
+            <Spinner
+                android:id="@+id/font_size_number"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"/>
 
             <Button
                 android:id="@+id/action_bold"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="bold" />
 
             <Button
                 android:id="@+id/action_italic"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="itali" />
 
             <Button
                 android:id="@+id/action_subscript"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="x," />
 
             <Button
                 android:id="@+id/action_superscript"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="x'" />
 
             <Button
                 android:id="@+id/action_strikethrough"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="-" />
 
             <Button
                 android:id="@+id/action_underline"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="_" />
 
-            <Button
-                android:id="@+id/action_head1"
-                android:layout_width="80dp"
-                android:layout_height="match_parent"
-                android:text="1" />
-
-            <Button
-                android:id="@+id/action_head2"
-                android:layout_width="80dp"
-                android:layout_height="match_parent"
-                android:text="2" />
-
-            <Button
-                android:id="@+id/action_head3"
-                android:layout_width="80dp"
-                android:layout_height="match_parent"
-                android:text="3" />
+            <Spinner
+                android:id="@+id/heading_number"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
 
             <Button
                 android:id="@+id/action_txt_color"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="txtcolor" />
 
             <Button
                 android:id="@+id/action_bg_color"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="bgcolor" />
 
             <Button
                 android:id="@+id/action_align_left"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="left" />
 
             <Button
                 android:id="@+id/action_align_center"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="center" />
 
             <Button
                 android:id="@+id/action_align_right"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="right" />
 
             <Button
                 android:id="@+id/action_blockquote"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="blockquote" />
 
             <Button
                 android:id="@+id/action_insert_bullets"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="bullet" />
 
             <Button
                 android:id="@+id/action_insert_numbers"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="number" />
 
             <Button
                 android:id="@+id/action_insert_audio"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="audio" />
 
             <Button
                 android:id="@+id/action_insert_image"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="image" />
 
             <Button
                 android:id="@+id/action_insert_video"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="video" />
 
             <Button
                 android:id="@+id/action_insert_checkbox"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="checkbox" />
 
             <Button
                 android:id="@+id/action_ocr"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="Use OCR" />
 
 
@@ -164,10 +178,9 @@
                 android:id="@+id/action_save"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="2dp"
                 android:text="save" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
-
     </HorizontalScrollView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

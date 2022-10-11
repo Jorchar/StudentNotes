@@ -1,5 +1,8 @@
 package com.jkucharski.studentnotes;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -7,10 +10,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.Html;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.jkucharski.studentnotes.databinding.EditorNavigationBarBinding;
@@ -27,10 +36,30 @@ public class NoteEditorFragment extends Fragment {
     EditorNavigationBarBinding navigationBar;
     private RichEditor mEditor;
     String filename;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
-    NoteEditorFragment(FragmentManager fm, String filename){
+    NoteEditorFragment(FragmentManager fm, String filename) {
         this.fm = fm;
         this.filename = filename;
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        try {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+            //TODO get bitmap on RichEditBox
+        }
     }
 
     @Override
@@ -39,9 +68,8 @@ public class NoteEditorFragment extends Fragment {
         binding = FragmentNoteEditorBinding.inflate(inflater, container, false);
 
         mEditor = (RichEditor) binding.textEditor;
-        mEditor.setEditorHeight(200);
-        mEditor.setEditorFontSize(22);
-        mEditor.setEditorFontColor(Color.RED);
+        mEditor.setEditorFontSize(16);
+        mEditor.setEditorFontColor(Color.BLACK);
         //TODO editable note background
         //mEditor.setEditorBackgroundColor(Color.BLUE);
         //mEditor.setBackgroundColor(Color.BLUE);
@@ -49,9 +77,45 @@ public class NoteEditorFragment extends Fragment {
         mEditor.setPadding(10, 10, 10, 10);
         //mEditor.setBackground("https://raw.githubusercontent.com/wasabeef/art/master/chip.jpg");
         mEditor.setPlaceholder("Insert text here...");
-        //mEditor.setInputEnabled(false);
 
         navigationBar = binding.navigationBar;
+
+        Spinner fontSizeSpinner = navigationBar.fontSizeNumber;
+        ArrayAdapter<CharSequence> fontSizeAdapter = ArrayAdapter.createFromResource(getContext(), R.array.font_size_array, android.R.layout.simple_spinner_item);
+        fontSizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        fontSizeSpinner.setAdapter(fontSizeAdapter);
+        fontSizeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String number = adapterView.getItemAtPosition(i).toString().substring(0, 2);
+                mEditor.setEditorFontSize(Integer.parseInt(number));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        Spinner headingSpinner = navigationBar.headingNumber;
+        ArrayAdapter<CharSequence> headingAdapter = ArrayAdapter.createFromResource(getContext(), R.array.heading_array, android.R.layout.simple_spinner_item);
+        headingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        headingSpinner.setAdapter(headingAdapter);
+        headingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i > 0) {
+                    String heading = adapterView.getItemAtPosition(i).toString().substring(8);
+                    mEditor.setHeading(Integer.parseInt(heading));
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
 
         navigationBar.actionUndo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,29 +173,9 @@ public class NoteEditorFragment extends Fragment {
             }
         });
 
-        navigationBar.actionHead1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.setHeading(1);
-            }
-        });
-
-        navigationBar.actionHead2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.setHeading(2);
-            }
-        });
-
-        navigationBar.actionHead3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.setHeading(3);
-            }
-        });
-
         navigationBar.actionTxtColor.setOnClickListener(new View.OnClickListener() {
             private boolean isChanged;
+
             @Override
             public void onClick(View v) {
                 mEditor.setTextColor(isChanged ? Color.BLACK : Color.RED);
@@ -141,6 +185,7 @@ public class NoteEditorFragment extends Fragment {
 
         navigationBar.actionBgColor.setOnClickListener(new View.OnClickListener() {
             private boolean isChanged;
+
             @Override
             public void onClick(View v) {
                 mEditor.setTextBackgroundColor(isChanged ? Color.TRANSPARENT : Color.YELLOW);
@@ -197,11 +242,13 @@ public class NoteEditorFragment extends Fragment {
             }
         });
 
+
+
         navigationBar.actionInsertImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEditor.insertImage("https://raw.githubusercontent.com/wasabeef/art/master/chip.jpg",
-                        "dachshund", 320);
+                dispatchTakePictureIntent();
+                //mEditor.insertImage("https://raw.githubusercontent.com/wasabeef/art/master/chip.jpg", "dachshund", 320);
             }
         });
 
@@ -229,7 +276,7 @@ public class NoteEditorFragment extends Fragment {
             }
         });
 
-        navigationBar.actionSave.setOnClickListener(new View.OnClickListener(){
+        navigationBar.actionSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String test;

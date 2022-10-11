@@ -67,7 +67,7 @@ public class TextRecognitionFragment extends Fragment {
         try {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         } catch (ActivityNotFoundException e) {
-
+            e.printStackTrace();
         }
     }
     @Override
