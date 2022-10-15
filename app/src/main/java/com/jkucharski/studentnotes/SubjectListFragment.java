@@ -14,9 +14,14 @@ import android.view.ViewGroup;
 
 import com.jkucharski.studentnotes.databinding.FragmentSubjectListBinding;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SubjectListFragment extends Fragment {
 
     FragmentSubjectListBinding binding;
+    List<SubjectDC> subjectDCList = new ArrayList<>();
+    RoomDB database;
     SubjectAdapter subjectAdapter;
     RecyclerView subjectRecyclerView;
     CreateSubjectFragment createSubjectFragment;
@@ -32,7 +37,10 @@ public class SubjectListFragment extends Fragment {
 
         binding = FragmentSubjectListBinding.inflate(inflater, container, false);
 
-        subjectAdapter = new SubjectAdapter(fm);
+        database = RoomDB.getInstance(getContext());
+        subjectDCList = database.subjectDao().getAll();
+
+        subjectAdapter = new SubjectAdapter(fm, subjectDCList, getActivity());
         subjectRecyclerView = binding.recyclerViewSubject;
         subjectRecyclerView.setAdapter(subjectAdapter);
         subjectRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -40,7 +48,7 @@ public class SubjectListFragment extends Fragment {
         binding.createSubjectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createSubjectFragment = new CreateSubjectFragment(fm);
+                createSubjectFragment = new CreateSubjectFragment(fm, database, subjectAdapter, subjectDCList);
                 ft = fm.beginTransaction();
                 ft.replace(R.id.MainLayout, createSubjectFragment);
                 ft.commit();

@@ -1,10 +1,33 @@
 package com.jkucharski.studentnotes;
 
-import android.media.Image;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
-public class NoteDC {
+import java.io.Serializable;
+
+@Entity(tableName = "note_list")
+public class NoteDC implements Serializable {
+
+    @PrimaryKey(autoGenerate = true)
+    private int ID;
+
     String name;
-    Image background;
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public NoteDC(String name) {
         super();

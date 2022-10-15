@@ -1,5 +1,6 @@
 package com.jkucharski.studentnotes;
 
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +22,16 @@ import java.util.List;
 
 public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectVH> {
 
-    static List<SubjectDC> subjectDC = new ArrayList<>();
+    private List<SubjectDC> subjectDCList = new ArrayList<>();
     FragmentManager fm;
+    private Activity context;
+    private RoomDB database;
 
-    SubjectAdapter(FragmentManager fm){
+    SubjectAdapter(FragmentManager fm, List<SubjectDC> subjectDCList, Activity context){
         this.fm = fm;
+        this.subjectDCList = subjectDCList;
+        this.context = context;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -38,8 +44,10 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
 
     @Override
     public void onBindViewHolder(@NonNull SubjectVH holder, int position) {
-        holder.subjectNameTV.setText(subjectDC.get(position).name);
-        holder.subjectDescTV.setText(subjectDC.get(position).description);
+        SubjectDC subjectDC = subjectDCList.get(position);
+        database = RoomDB.getInstance(context);
+        holder.subjectNameTV.setText(subjectDC.getName());
+        holder.subjectDescTV.setText(subjectDC.getDescription());
 
         holder.subjectBackground.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,9 +82,7 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
 
     @Override
     public int getItemCount() {
-        if(subjectDC == null)
-            return 0;
-        return subjectDC.size();
+        return subjectDCList.size();
     }
 
     public class SubjectVH extends RecyclerView.ViewHolder{
@@ -97,10 +103,4 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
             subjectBackground = itemView.findViewById(R.id.subjectImageBG);
         }
     }
-    public void addSubject(String name, String description){
-        subjectDC.add(new SubjectDC(name, description));
-        notifyItemInserted(subjectDC.size()-1);
-    }
-
-
 }

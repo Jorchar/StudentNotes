@@ -18,9 +18,14 @@ import android.widget.EditText;
 
 import com.jkucharski.studentnotes.databinding.FragmentNotesListBinding;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NotesListFragment extends Fragment {
 
     FragmentNotesListBinding binding;
+    List<NoteDC> noteDCList  = new ArrayList<>();
+    RoomDB database;
     NoteAdapter noteAdapter;
     RecyclerView noteRecyclerView;
     FragmentManager fm;

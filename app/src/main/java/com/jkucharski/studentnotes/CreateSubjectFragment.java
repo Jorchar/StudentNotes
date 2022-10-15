@@ -13,15 +13,24 @@ import android.widget.EditText;
 
 import com.jkucharski.studentnotes.databinding.FragmentCreateSubjectBinding;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CreateSubjectFragment extends Fragment {
 
     FragmentCreateSubjectBinding binding;
     FragmentManager fm;
     FragmentTransaction ft;
     SubjectListFragment subjectListFragment;
+    List<SubjectDC> subjectDCList = new ArrayList<>();
+    RoomDB database;
+    SubjectAdapter subjectAdapter;
 
-    CreateSubjectFragment(FragmentManager fm){
+    CreateSubjectFragment(FragmentManager fm, RoomDB database, SubjectAdapter subjectAdapter, List<SubjectDC> subjectDCList){
         this.fm = fm;
+        this.subjectDCList = subjectDCList;
+        this.database = database;
+        this.subjectAdapter = subjectAdapter;
     }
 
     @Override
@@ -37,8 +46,15 @@ public class CreateSubjectFragment extends Fragment {
                 String subjectName = subjectNameET.getText().toString();
                 String subjectDesc = subjectDescET.getText().toString();
 
-                SubjectAdapter subjectAdapter = new SubjectAdapter(fm);
-                subjectAdapter.addSubject(subjectName, subjectDesc);
+                SubjectDC subjectDC = new SubjectDC();
+                subjectDC.setName(subjectName);
+                subjectDC.setDescription(subjectDesc);
+                database.subjectDao().insert(subjectDC);
+                subjectDCList.clear();
+                subjectDCList.addAll(database.subjectDao().getAll());
+
+                //SubjectAdapter subjectAdapter = new SubjectAdapter(fm, subjectDCList);
+                //subjectAdapter.addSubject(subjectName, subjectDesc);
 
                 subjectListFragment = new SubjectListFragment(fm);
                 ft = fm.beginTransaction();

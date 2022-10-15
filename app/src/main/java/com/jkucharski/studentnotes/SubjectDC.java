@@ -2,15 +2,44 @@ package com.jkucharski.studentnotes;
 
 import android.media.Image;
 
-public class SubjectDC {
-    String name;
-    String description;
-    Image background;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
 
-    public SubjectDC(String name, String description) {
-        super();
+@Entity(tableName = "subject_list")
+public class SubjectDC implements Serializable {
+
+    @PrimaryKey(autoGenerate = true)
+    private int ID;
+
+    private String name;
+    private String description;
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
         this.description = description;
+    }
+
+    public SubjectDC() {
     }
 }
