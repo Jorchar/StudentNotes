@@ -1,7 +1,5 @@
 package com.jkucharski.studentnotes;
 
-import android.media.Image;
-
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -12,7 +10,6 @@ public class SubjectDC implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int ID;
-
     private String name;
     private String description;
 

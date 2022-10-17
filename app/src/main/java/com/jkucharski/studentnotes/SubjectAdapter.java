@@ -52,7 +52,7 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
         holder.subjectBackground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NotesListFragment notesListFragment = new NotesListFragment(fm);
+                NotesListFragment notesListFragment = new NotesListFragment(fm, subjectDC.getID());
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.replace(R.id.MainLayout, notesListFragment);
                 ft.commit();

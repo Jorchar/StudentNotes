@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,12 +28,16 @@ import java.util.List;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
 
-    static List<NoteDC> noteDC = new ArrayList<>();
-
+    static List<NoteDC> noteDCList = new ArrayList<>();
     FragmentManager fm;
+    private Activity context;
+    private RoomDB database;
 
-    NoteAdapter(FragmentManager fm){
+    NoteAdapter(FragmentManager fm, List<NoteDC> noteDCList, Activity context){
         this.fm = fm;
+        this.noteDCList = noteDCList;
+        this.context = context;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -44,12 +50,13 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
 
     @Override
     public void onBindViewHolder(@NonNull NoteVH holder, int position) {
-        //holder.noteNameTV.setText(noteDC.get(position).name);
-        holder.noteNameTV.setText(noteDC.get(position).name);
+        NoteDC noteDC = noteDCList.get(position);
+        database = RoomDB.getInstance(context);
+        holder.noteNameTV.setText(noteDC.getName());
         holder.noteBackground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NoteEditorFragment noteEditorFragment = new NoteEditorFragment(fm, noteDC.get(holder.getAdapterPosition()).name);
+                NoteEditorFragment noteEditorFragment = new NoteEditorFragment(fm, noteDC.getName());
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.replace(R.id.MainLayout, noteEditorFragment);
                 ft.commit();
@@ -59,9 +66,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
 
     @Override
     public int getItemCount() {
-        if(noteDC == null)
-            return 0;
-        return noteDC.size();
+        return noteDCList.size();
     }
 
     public class NoteVH extends RecyclerView.ViewHolder{
@@ -77,11 +82,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
         }
     }
     public void addNote(String name, Context context){
-        noteDC.add(new NoteDC(name));
         String test = context.getExternalFilesDir("Notes").toString();
         createNoteDocument(name, context);
-        notifyItemInserted(noteDC.size()-1);
-        //TODO compare noteDC list to existing files
     }
 
     public void createNoteDocument(String name, Context context){

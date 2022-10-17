@@ -30,19 +30,25 @@ public class NotesListFragment extends Fragment {
     RecyclerView noteRecyclerView;
     FragmentManager fm;
     FragmentTransaction ft;
+    int subjectId;
     String noteName;
 
 
-    NotesListFragment(FragmentManager fm) {
+    NotesListFragment(FragmentManager fm, int subjectId) {
         this.fm = fm;
+        this.subjectId = subjectId;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentNotesListBinding.inflate(inflater, container, false);
+
+        database = RoomDB.getInstance(getContext());
+        noteDCList = database.noteDao().getAll(subjectId);
+
         noteRecyclerView = binding.recyclerViewNotes;
-        noteAdapter = new NoteAdapter(fm);
+        noteAdapter = new NoteAdapter(fm, noteDCList, getActivity());
         noteRecyclerView.setAdapter(noteAdapter);
         noteRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
@@ -58,7 +64,15 @@ public class NotesListFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         noteName = input.getText().toString();
-                        noteAdapter.addNote(noteName, getContext());
+
+                        NoteDC noteDC = new NoteDC();
+                        noteDC.setName(noteName);
+                        noteDC.setSubject(subjectId);
+                        database.noteDao().insert(noteDC);
+                        noteDCList.clear();
+                        noteDCList.addAll(database.noteDao().getAll(subjectId));
+                        noteAdapter.notifyDataSetChanged();
+                        noteAdapter.addNote(subjectId+"_"+noteName, getContext());
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

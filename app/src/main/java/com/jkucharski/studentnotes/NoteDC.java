@@ -1,6 +1,7 @@
 package com.jkucharski.studentnotes;
 
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
@@ -10,8 +11,8 @@ public class NoteDC implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int ID;
-
-    String name;
+    private int subject;
+    private String name;
 
     public int getID() {
         return ID;
@@ -19,6 +20,14 @@ public class NoteDC implements Serializable {
 
     public void setID(int ID) {
         this.ID = ID;
+    }
+
+    public int getSubject() {
+        return subject;
+    }
+
+    public void setSubject(int subject) {
+        this.subject = subject;
     }
 
     public String getName() {
@@ -29,8 +38,6 @@ public class NoteDC implements Serializable {
         this.name = name;
     }
 
-    public NoteDC(String name) {
-        super();
-        this.name = name;
+    public NoteDC() {
     }
 }
