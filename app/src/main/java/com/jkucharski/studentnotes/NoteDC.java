@@ -13,6 +13,8 @@ public class NoteDC implements Serializable {
     private int ID;
     private int subject;
     private String name;
+    private String content;
+    private boolean active;
 
     public int getID() {
         return ID;
@@ -36,6 +38,22 @@ public class NoteDC implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public NoteDC() {

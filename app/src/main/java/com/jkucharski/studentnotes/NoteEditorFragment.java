@@ -32,15 +32,16 @@ public class NoteEditorFragment extends Fragment {
     FragmentNoteEditorBinding binding;
     FragmentManager fm;
     FragmentTransaction ft;
+    RoomDB database;
     TextRecognitionFragment textRecognitionFragment;
     EditorNavigationBarBinding navigationBar;
     private RichEditor mEditor;
-    String filename;
+    NoteDC noteDC;
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
-    NoteEditorFragment(FragmentManager fm, String filename) {
+    NoteEditorFragment(FragmentManager fm, NoteDC noteDC) {
         this.fm = fm;
-        this.filename = filename;
+        this.noteDC = noteDC;
     }
 
     private void dispatchTakePictureIntent() {
@@ -65,6 +66,8 @@ public class NoteEditorFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        database = RoomDB.getInstance(getContext());
+
         binding = FragmentNoteEditorBinding.inflate(inflater, container, false);
 
         mEditor = (RichEditor) binding.textEditor;
@@ -77,6 +80,7 @@ public class NoteEditorFragment extends Fragment {
         mEditor.setPadding(10, 10, 10, 10);
         //mEditor.setBackground("https://raw.githubusercontent.com/wasabeef/art/master/chip.jpg");
         mEditor.setPlaceholder("Insert text here...");
+        mEditor.setHtml(noteDC.getContent());
 
         navigationBar = binding.navigationBar;
 
@@ -279,10 +283,8 @@ public class NoteEditorFragment extends Fragment {
         navigationBar.actionSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String test;
-                test = mEditor.getHtml();
-                //TODO Create saving file mechanics
-                mEditor.setHtml(test);
+                database.noteDao().updateContent(noteDC.getID(), mEditor.getHtml());
+                noteDC.setContent(mEditor.getHtml());
             }
         });
 

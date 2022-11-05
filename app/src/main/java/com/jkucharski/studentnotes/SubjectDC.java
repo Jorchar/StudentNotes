@@ -12,6 +12,7 @@ public class SubjectDC implements Serializable {
     private int ID;
     private String name;
     private String description;
+    private Boolean active;
 
     public int getID() {
         return ID;
@@ -35,6 +36,14 @@ public class SubjectDC implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public SubjectDC() {

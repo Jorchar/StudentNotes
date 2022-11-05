@@ -68,6 +68,7 @@ public class NotesListFragment extends Fragment {
                         NoteDC noteDC = new NoteDC();
                         noteDC.setName(noteName);
                         noteDC.setSubject(subjectId);
+                        noteDC.setActive(true);
                         database.noteDao().insert(noteDC);
                         noteDCList.clear();
                         noteDCList.addAll(database.noteDao().getAll(subjectId));

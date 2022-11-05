@@ -21,8 +21,14 @@ public interface NoteDao {
     void reset(List<NoteDC> noteDC);
 
     @Query("UPDATE note_list SET name = :sName WHERE ID = :sID")
-    void update(int sID,String sName);
+    void updateName(int sID,String sName);
 
-    @Query("SELECT * FROM note_list WHERE subject = :sSubject")
+    @Query("UPDATE note_list SET content = :sContent WHERE ID = :sID")
+    void updateContent(int sID,String sContent);
+
+    @Query("UPDATE note_list SET active = :sActive WHERE ID = :sID")
+    void hide(int sID,boolean sActive);
+
+    @Query("SELECT * FROM note_list WHERE subject = :sSubject AND active = 1")
     List<NoteDC> getAll(int sSubject);
 }

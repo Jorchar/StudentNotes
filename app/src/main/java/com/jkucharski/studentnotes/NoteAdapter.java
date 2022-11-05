@@ -56,10 +56,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
         holder.noteBackground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NoteEditorFragment noteEditorFragment = new NoteEditorFragment(fm, noteDC.getName());
+                NoteEditorFragment noteEditorFragment = new NoteEditorFragment(fm, noteDC);
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.replace(R.id.MainLayout, noteEditorFragment);
                 ft.commit();
+                //TODO polacz content z html edytora
             }
         });
     }
