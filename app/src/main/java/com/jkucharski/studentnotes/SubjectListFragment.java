@@ -50,7 +50,7 @@ public class SubjectListFragment extends Fragment {
             public void onClick(View view) {
                 createSubjectFragment = new CreateSubjectFragment(fm, database, subjectAdapter, subjectDCList);
                 ft = fm.beginTransaction();
-                ft.replace(R.id.MainLayout, createSubjectFragment);
+                ft.replace(R.id.MainLayout, createSubjectFragment).addToBackStack(null);
                 ft.commit();
             }
         });

@@ -58,7 +58,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
             public void onClick(View view) {
                 NoteEditorFragment noteEditorFragment = new NoteEditorFragment(fm, noteDC);
                 FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.MainLayout, noteEditorFragment);
+                ft.replace(R.id.MainLayout, noteEditorFragment).addToBackStack(null);
                 ft.commit();
                 //TODO polacz content z html edytora
             }

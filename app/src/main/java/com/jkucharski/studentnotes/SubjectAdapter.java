@@ -54,7 +54,7 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
             public void onClick(View view) {
                 NotesListFragment notesListFragment = new NotesListFragment(fm, subjectDC.getID());
                 FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.MainLayout, notesListFragment);
+                ft.replace(R.id.MainLayout, notesListFragment).addToBackStack(null);
                 ft.commit();
             }
         });

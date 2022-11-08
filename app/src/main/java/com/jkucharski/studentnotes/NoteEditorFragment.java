@@ -275,7 +275,7 @@ public class NoteEditorFragment extends Fragment {
             public void onClick(View view) {
                 textRecognitionFragment = new TextRecognitionFragment(fm);
                 FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.MainLayout, textRecognitionFragment);
+                ft.replace(R.id.MainLayout, textRecognitionFragment).addToBackStack(null);
                 ft.commit();
             }
         });

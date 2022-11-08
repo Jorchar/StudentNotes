@@ -53,9 +53,6 @@ public class CreateSubjectFragment extends Fragment {
                 subjectDCList.clear();
                 subjectDCList.addAll(database.subjectDao().getAll());
 
-                //SubjectAdapter subjectAdapter = new SubjectAdapter(fm, subjectDCList);
-                //subjectAdapter.addSubject(subjectName, subjectDesc);
-
                 subjectListFragment = new SubjectListFragment(fm);
                 ft = fm.beginTransaction();
                 ft.replace(R.id.MainLayout, subjectListFragment);
