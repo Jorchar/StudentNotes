@@ -25,6 +25,10 @@ import android.widget.TextView;
 import com.jkucharski.studentnotes.databinding.EditorNavigationBarBinding;
 import com.jkucharski.studentnotes.databinding.FragmentNoteEditorBinding;
 
+import org.apache.commons.codec.binary.Base64;
+
+import java.io.ByteArrayOutputStream;
+
 import jp.wasabeef.richeditor.RichEditor;
 
 public class NoteEditorFragment extends Fragment {
@@ -38,6 +42,7 @@ public class NoteEditorFragment extends Fragment {
     private RichEditor mEditor;
     NoteDC noteDC;
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    byte[] imgBytes;
 
     NoteEditorFragment(FragmentManager fm, NoteDC noteDC) {
         this.fm = fm;
@@ -57,9 +62,14 @@ public class NoteEditorFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE) {
             Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
 
-            //TODO get bitmap on RichEditBox
+            Bitmap bitmap = (Bitmap) extras.get("data");
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] imgBytes = baos.toByteArray();
+            String test = "data:image/jpeg;base64,";
+            test += Base64.encodeBase64(imgBytes).toString();
+            test += 1;
         }
     }
 
@@ -252,7 +262,12 @@ public class NoteEditorFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 dispatchTakePictureIntent();
-                //mEditor.insertImage("https://raw.githubusercontent.com/wasabeef/art/master/chip.jpg", "dachshund", 320);
+
+                //TODO add in proper place in html <img alt="" src="imgBytes"/>
+                String test = "data:image/jpeg;base64,";
+                test += imgBytes;
+                mEditor.insertImage(test, "");
+                //mEditor.insertImage("https://img.freepik.com/premium-wektory/profil-czlowieka-avatar-na-rundy-ikona_24640-14044.jpg?w=2000", "dachshund", 320, 320);
             }
         });
 
