@@ -87,18 +87,7 @@ public class TextRecognitionFragment extends Fragment {
 
         Task<Text> result =
                 recognizer.process(image)
-                        .addOnSuccessListener(new OnSuccessListener<Text>() {
-                            @Override
-                            public void onSuccess(Text visionText) {
-                                binding.covertedTextDisplay.setText(visionText.getText());
-                            }
-                        })
-                        .addOnFailureListener(
-                                new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(getContext(), "FUCK", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                        .addOnSuccessListener(visionText -> binding.covertedTextDisplay.setText(visionText.getText()))
+                        .addOnFailureListener(e -> Toast.makeText(getContext(), "FUCK", Toast.LENGTH_SHORT).show());
     }
 }

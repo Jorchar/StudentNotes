@@ -45,14 +45,11 @@ public class SubjectListFragment extends Fragment {
         subjectRecyclerView.setAdapter(subjectAdapter);
         subjectRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        binding.createSubjectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createSubjectFragment = new CreateSubjectFragment(fm, database, subjectAdapter, subjectDCList);
-                ft = fm.beginTransaction();
-                ft.replace(R.id.MainLayout, createSubjectFragment).addToBackStack(null);
-                ft.commit();
-            }
+        binding.createSubjectButton.setOnClickListener(view -> {
+            createSubjectFragment = new CreateSubjectFragment(fm, database, subjectAdapter, subjectDCList);
+            ft = fm.beginTransaction();
+            ft.replace(R.id.MainLayout, createSubjectFragment).addToBackStack(null);
+            ft.commit();
         });
 
         return binding.getRoot();

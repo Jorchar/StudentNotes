@@ -11,28 +11,29 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jkucharski.studentnotes.databinding.FragmentAccountSettingsBinding;
+import com.jkucharski.studentnotes.databinding.FragmentLoginBinding;
 
-public class AccountSettingsFragment extends Fragment {
+public class LoginFragment extends Fragment {
 
-    FragmentAccountSettingsBinding binding;
-    RoomDB database;
-    LoginFragment loginFragment;
+    FragmentLoginBinding binding;
+    RegisterFragment registerFragment;
     FragmentManager fm;
     FragmentTransaction ft;
 
-    public AccountSettingsFragment(FragmentManager fm) {
+    public LoginFragment(FragmentManager fm) {
         this.fm = fm;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentAccountSettingsBinding.inflate(inflater, container, false);
 
-        binding.loginInButton.setOnClickListener(view -> {
-            loginFragment = new LoginFragment(fm);
+        binding = FragmentLoginBinding.inflate(inflater, container, false);
+
+        binding.register.setOnClickListener(view -> {
+            registerFragment = new RegisterFragment();
             ft = fm.beginTransaction();
-            ft.replace(R.id.MainLayout, loginFragment).addToBackStack(null);
+            ft.replace(R.id.MainLayout, registerFragment).addToBackStack(null);
             ft.commit();
         });
 

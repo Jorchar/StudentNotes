@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -65,17 +66,19 @@ public class NoteEditorFragment extends Fragment {
 
             Bitmap bitmap = (Bitmap) extras.get("data");
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
             byte[] imgBytes = baos.toByteArray();
             String test = "data:image/jpeg;base64,";
-            test += Base64.encodeBase64(imgBytes).toString();
-            test += 1;
+            test += Base64.encodeBase64String(imgBytes);
+            mEditor.insertImage(test, "", 350, 350);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+
         database = RoomDB.getInstance(getContext());
 
         binding = FragmentNoteEditorBinding.inflate(inflater, container, false);
@@ -262,11 +265,6 @@ public class NoteEditorFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 dispatchTakePictureIntent();
-
-                //TODO add in proper place in html <img alt="" src="imgBytes"/>
-                String test = "data:image/jpeg;base64,";
-                test += imgBytes;
-                mEditor.insertImage(test, "");
                 //mEditor.insertImage("https://img.freepik.com/premium-wektory/profil-czlowieka-avatar-na-rundy-ikona_24640-14044.jpg?w=2000", "dachshund", 320, 320);
             }
         });

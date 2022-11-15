@@ -41,10 +41,8 @@ public class CreateSubjectFragment extends Fragment {
         binding.confirmNewSubjectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText subjectNameET = binding.subjectNameInput;
-                EditText subjectDescET = binding.subjectDescriptionInput;
-                String subjectName = subjectNameET.getText().toString();
-                String subjectDesc = subjectDescET.getText().toString();
+                String subjectName = binding.subjectNameInput.getText().toString();
+                String subjectDesc = binding.subjectDescriptionInput.getText().toString();
 
                 SubjectDC subjectDC = new SubjectDC();
                 subjectDC.setName(subjectName);

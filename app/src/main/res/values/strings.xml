@@ -8,6 +8,13 @@
     <string name="expand_subject_button">Expand subject</string>
     <string name="capture_image">Capture Image</string>
     <string name="convert_to_text">Convert to Text</string>
+
+    <string name="login">LOGIN</string>
+    <string name="email_hint">Email Address</string>
+    <string name="password_hint">Password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="register">Register</string>
+
     <string-array name="font_size_array">
         <item>16</item>
         <item>22</item>
