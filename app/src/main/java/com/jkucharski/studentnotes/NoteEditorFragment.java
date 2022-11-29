@@ -1,28 +1,33 @@
 package com.jkucharski.studentnotes;
 
+import static com.jkucharski.studentnotes.utils.Const.FIREBASE_DATABASE_URL;
+
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.provider.MediaStore;
-import android.text.Editable;
-import android.text.Html;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.jkucharski.studentnotes.databinding.EditorNavigationBarBinding;
 import com.jkucharski.studentnotes.databinding.FragmentNoteEditorBinding;
 
@@ -36,18 +41,18 @@ public class NoteEditorFragment extends Fragment {
 
     FragmentNoteEditorBinding binding;
     FragmentManager fm;
-    FragmentTransaction ft;
-    RoomDB database;
     TextRecognitionFragment textRecognitionFragment;
     EditorNavigationBarBinding navigationBar;
     private RichEditor mEditor;
-    NoteDC noteDC;
+    String firebaseReference;
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    byte[] imgBytes;
+    DatabaseReference ref;
 
-    NoteEditorFragment(FragmentManager fm, NoteDC noteDC) {
+    NoteEditorFragment(FragmentManager fm, String firebaseReference) {
         this.fm = fm;
-        this.noteDC = noteDC;
+        this.firebaseReference = firebaseReference;
+        ref = FirebaseDatabase.getInstance(FIREBASE_DATABASE_URL).getReference(firebaseReference)
+                .child("content");
     }
 
     private void dispatchTakePictureIntent() {
@@ -65,9 +70,9 @@ public class NoteEditorFragment extends Fragment {
             Bundle extras = data.getExtras();
 
             Bitmap bitmap = (Bitmap) extras.get("data");
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-            byte[] imgBytes = baos.toByteArray();
+            ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArray);
+            byte[] imgBytes = byteArray.toByteArray();
             String test = "data:image/jpeg;base64,";
             test += Base64.encodeBase64String(imgBytes);
             mEditor.insertImage(test, "", 350, 350);
@@ -77,11 +82,27 @@ public class NoteEditorFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        binding = FragmentNoteEditorBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
 
-        database = RoomDB.getInstance(getContext());
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                mEditor.setHtml(snapshot.getValue(String.class));
+            }
 
-        binding = FragmentNoteEditorBinding.inflate(inflater, container, false);
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         mEditor = (RichEditor) binding.textEditor;
         mEditor.setEditorFontSize(16);
@@ -93,7 +114,6 @@ public class NoteEditorFragment extends Fragment {
         mEditor.setPadding(10, 10, 10, 10);
         //mEditor.setBackground("https://raw.githubusercontent.com/wasabeef/art/master/chip.jpg");
         mEditor.setPlaceholder("Insert text here...");
-        mEditor.setHtml(noteDC.getContent());
 
         navigationBar = binding.navigationBar;
 
@@ -134,61 +154,21 @@ public class NoteEditorFragment extends Fragment {
         });
 
 
-        navigationBar.actionUndo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mEditor.undo();
-            }
-        });
+        navigationBar.actionUndo.setOnClickListener(v -> mEditor.undo());
 
-        navigationBar.actionRedo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mEditor.redo();
-            }
-        });
+        navigationBar.actionRedo.setOnClickListener(v -> mEditor.redo());
 
-        navigationBar.actionBold.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.setBold();
-            }
-        });
+        navigationBar.actionBold.setOnClickListener(v -> mEditor.setBold());
 
-        navigationBar.actionItalic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.setItalic();
-            }
-        });
+        navigationBar.actionItalic.setOnClickListener(v -> mEditor.setItalic());
 
-        navigationBar.actionSubscript.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.setSubscript();
-            }
-        });
+        navigationBar.actionSubscript.setOnClickListener(v -> mEditor.setSubscript());
 
-        navigationBar.actionSuperscript.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.setSuperscript();
-            }
-        });
+        navigationBar.actionSuperscript.setOnClickListener(v -> mEditor.setSuperscript());
 
-        navigationBar.actionStrikethrough.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.setStrikeThrough();
-            }
-        });
+        navigationBar.actionStrikethrough.setOnClickListener(v -> mEditor.setStrikeThrough());
 
-        navigationBar.actionUnderline.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.setUnderline();
-            }
-        });
+        navigationBar.actionUnderline.setOnClickListener(v -> mEditor.setUnderline());
 
         navigationBar.actionTxtColor.setOnClickListener(new View.OnClickListener() {
             private boolean isChanged;
@@ -210,97 +190,35 @@ public class NoteEditorFragment extends Fragment {
             }
         });
 
-        navigationBar.actionAlignLeft.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.setAlignLeft();
-            }
+        navigationBar.actionAlignLeft.setOnClickListener(v -> mEditor.setAlignLeft());
+
+        navigationBar.actionAlignCenter.setOnClickListener(v -> mEditor.setAlignCenter());
+
+        navigationBar.actionAlignRight.setOnClickListener(v -> mEditor.setAlignRight());
+
+        navigationBar.actionBlockquote.setOnClickListener(v -> mEditor.setBlockquote());
+
+        navigationBar.actionInsertBullets.setOnClickListener(v -> mEditor.setBullets());
+
+        navigationBar.actionInsertNumbers.setOnClickListener(v -> mEditor.setNumbers());
+
+        navigationBar.actionInsertAudio.setOnClickListener(v -> mEditor.insertAudio("https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_5MG.mp3"));
+
+
+
+        navigationBar.actionInsertImage.setOnClickListener(v -> dispatchTakePictureIntent());
+
+        navigationBar.actionInsertVideo.setOnClickListener(v -> mEditor.insertVideo("https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4", 360));
+
+        navigationBar.actionInsertCheckbox.setOnClickListener(v -> mEditor.insertTodo());
+
+        navigationBar.actionOcr.setOnClickListener(view1 -> {
+            textRecognitionFragment = new TextRecognitionFragment(fm);
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.MainLayout, textRecognitionFragment).addToBackStack(null);
+            ft.commit();
         });
 
-        navigationBar.actionAlignCenter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.setAlignCenter();
-            }
-        });
-
-        navigationBar.actionAlignRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.setAlignRight();
-            }
-        });
-
-        navigationBar.actionBlockquote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.setBlockquote();
-            }
-        });
-
-        navigationBar.actionInsertBullets.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.setBullets();
-            }
-        });
-
-        navigationBar.actionInsertNumbers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.setNumbers();
-            }
-        });
-
-        navigationBar.actionInsertAudio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.insertAudio("https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_5MG.mp3");
-            }
-        });
-
-
-
-        navigationBar.actionInsertImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dispatchTakePictureIntent();
-                //mEditor.insertImage("https://img.freepik.com/premium-wektory/profil-czlowieka-avatar-na-rundy-ikona_24640-14044.jpg?w=2000", "dachshund", 320, 320);
-            }
-        });
-
-        navigationBar.actionInsertVideo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.insertVideo("https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4", 360);
-            }
-        });
-
-        navigationBar.actionInsertCheckbox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditor.insertTodo();
-            }
-        });
-
-        navigationBar.actionOcr.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                textRecognitionFragment = new TextRecognitionFragment(fm);
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.MainLayout, textRecognitionFragment).addToBackStack(null);
-                ft.commit();
-            }
-        });
-
-        navigationBar.actionSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                database.noteDao().updateContent(noteDC.getID(), mEditor.getHtml());
-                noteDC.setContent(mEditor.getHtml());
-            }
-        });
-
-        return binding.getRoot();
+        navigationBar.actionSave.setOnClickListener(v -> ref.setValue(mEditor.getHtml()));
     }
 }

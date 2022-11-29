@@ -3,6 +3,8 @@ package com.jkucharski.studentnotes;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -25,6 +27,8 @@ public class LoginFragment extends Fragment {
 
     FragmentLoginBinding binding;
     RegisterFragment registerFragment;
+    ForgotPasswordFragment forgotPasswordFragment;
+    SubjectListFragment subjectListFragment;
     FragmentManager fm;
     FragmentTransaction ft;
 
@@ -39,11 +43,18 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
         binding = FragmentLoginBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         mAuth = FirebaseAuth.getInstance();
 
-        binding.loginButton.setOnClickListener(view -> {
+        binding.loginButton.setOnClickListener(v -> {
             emailAddress = binding.loginEmail.getText().toString().trim();
             password = binding.loginPassword.getText().toString();
 
@@ -64,30 +75,37 @@ public class LoginFragment extends Fragment {
             }
             binding.progressBar.setVisibility(View.VISIBLE);
 
-            mAuth.signInWithEmailAndPassword(emailAddress, password).addOnCompleteListener(new OnCompleteListener<AuthResult>(){
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if(task.isSuccessful()){
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        if(user.isEmailVerified()){
-                            //TODO change to logged user mode
-                        }else{
-                            Toast.makeText(getContext(), "Please verify your email", Toast.LENGTH_LONG).show();
-                        }
+            mAuth.signInWithEmailAndPassword(emailAddress, password).addOnCompleteListener(task -> {
+                if(task.isSuccessful()){
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    if(user.isEmailVerified()){
+                        Toast.makeText(getContext(), "Logged successfully!", Toast.LENGTH_LONG).show();
+                        binding.progressBar.setVisibility(View.GONE);
+                        subjectListFragment = new SubjectListFragment(fm);
+                        ft = fm.beginTransaction();
+                        ft.replace(R.id.MainLayout, subjectListFragment);
+                        ft.commit();
                     }else{
-                        Toast.makeText(getContext(), "Failed to login! Please check your credentials", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Please verify your email!", Toast.LENGTH_LONG).show();
                     }
+                }else{
+                    Toast.makeText(getContext(), "Failed to login! Please check your credentials!", Toast.LENGTH_LONG).show();
                 }
             });
         });
 
-        binding.register.setOnClickListener(view -> {
+        binding.register.setOnClickListener(v -> {
             registerFragment = new RegisterFragment();
             ft = fm.beginTransaction();
             ft.replace(R.id.MainLayout, registerFragment).addToBackStack(null);
             ft.commit();
         });
 
-        return binding.getRoot();
+        binding.forgotPassword.setOnClickListener(v -> {
+            forgotPasswordFragment = new ForgotPasswordFragment();
+            ft = fm.beginTransaction();
+            ft.replace(R.id.MainLayout, forgotPasswordFragment).addToBackStack(null);
+            ft.commit();
+        });
     }
 }

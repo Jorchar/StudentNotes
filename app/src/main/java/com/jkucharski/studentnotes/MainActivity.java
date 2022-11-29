@@ -12,10 +12,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.util.List;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
+    LoginFragment loginFragment;
     SubjectListFragment subjectListFragment;
     AccountSettingsFragment accountSettingsFragment;
     FragmentManager fm;
@@ -37,9 +38,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         fm = getSupportFragmentManager();
-        subjectListFragment = new SubjectListFragment(fm);
-        ft = fm.beginTransaction();
-        ft.replace(R.id.MainLayout, subjectListFragment);
+
+        if(FirebaseAuth.getInstance().getCurrentUser() != null){
+            subjectListFragment = new SubjectListFragment(fm);
+            ft = fm.beginTransaction();
+            ft.replace(R.id.MainLayout, subjectListFragment);
+        }else{
+            loginFragment = new LoginFragment(fm);
+            ft = fm.beginTransaction();
+            ft.replace(R.id.MainLayout, loginFragment);
+        }
         ft.commit();
     }
 
@@ -51,15 +59,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.accountButton:
                 accountSettingsFragment = new AccountSettingsFragment(fm);
                 ft = fm.beginTransaction();
                 ft.replace(R.id.MainLayout, accountSettingsFragment).addToBackStack(null);
                 ft.commit();
                 return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 }

@@ -10,10 +10,23 @@
     <string name="convert_to_text">Convert to Text</string>
 
     <string name="login">LOGIN</string>
+    <string name="logout">LOGOUT</string>
+    <string name="reset">RESET</string>
     <string name="email_hint">Email Address</string>
     <string name="password_hint">Password</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="register">Register</string>
+
+    <string name="emailReq">Email address is required!</string>
+    <string name="emailValid">Please provide valid email!</string>
+    <string name="passReq">Password is required!</string>
+    <string name="passValid">Minimum password length should be 8 characters!</string>
+    <string name="registerSuccess">User has been registered successfully! Check your email to verify your account!</string>
+    <string name="registerFailed">Failed to registered!</string>
+    <string name="loginSuccess">Logged successfully!</string>
+    <string name="mailVerify">Please verify your email!</string>
+    <string name="loginFailed">Failed to login! Please check your credentials!</string>
+
 
     <string-array name="font_size_array">
         <item>16</item>
@@ -31,6 +44,4 @@
         <item>Heading 3</item>
         <item>Heading 4</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

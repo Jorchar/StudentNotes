@@ -1,14 +1,5 @@
 package com.jkucharski.studentnotes;
 
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-
-import android.app.Activity;
-import android.content.Context;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,9 +11,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,13 +19,15 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
 
     static List<NoteDC> noteDCList = new ArrayList<>();
     FragmentManager fm;
-    private Activity context;
-    private RoomDB database;
+    String firebaseReference;
 
-    NoteAdapter(FragmentManager fm, List<NoteDC> noteDCList, Activity context){
+    NoteAdapter(FragmentManager fm, String firebaseReference){
         this.fm = fm;
+        this.firebaseReference = firebaseReference;
+    }
+
+    public void setNote(List<NoteDC> noteDCList){
         this.noteDCList = noteDCList;
-        this.context = context;
         notifyDataSetChanged();
     }
 
@@ -51,17 +42,12 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
     @Override
     public void onBindViewHolder(@NonNull NoteVH holder, int position) {
         NoteDC noteDC = noteDCList.get(position);
-        database = RoomDB.getInstance(context);
         holder.noteNameTV.setText(noteDC.getName());
-        holder.noteBackground.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                NoteEditorFragment noteEditorFragment = new NoteEditorFragment(fm, noteDC);
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.MainLayout, noteEditorFragment).addToBackStack(null);
-                ft.commit();
-                //TODO polacz content z html edytora
-            }
+        holder.noteBackground.setOnClickListener(view -> {
+            NoteEditorFragment noteEditorFragment = new NoteEditorFragment(fm, firebaseReference+noteDC.getId());
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.MainLayout, noteEditorFragment).addToBackStack(null);
+            ft.commit();
         });
     }
 
@@ -80,24 +66,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
             noteNameTV = itemView.findViewById(R.id.noteNameTV);
             noteCardView = itemView.findViewById(R.id.noteCardView);
             noteBackground = itemView.findViewById(R.id.noteImageBG);
-        }
-    }
-    public void addNote(String name, Context context){
-        String test = context.getExternalFilesDir("Notes").toString();
-        createNoteDocument(name, context);
-    }
-
-    public void createNoteDocument(String name, Context context){
-        File extStudentNoteFile = new File(context.getExternalFilesDir("Notes"), name +  ".html");
-        FileOutputStream fileOutputStream;
-        try {
-            fileOutputStream = new FileOutputStream(extStudentNoteFile);
-            fileOutputStream.write("lol".trim().getBytes());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(0);
         }
     }
 }

@@ -1,7 +1,12 @@
 package com.jkucharski.studentnotes;
 
+import static com.jkucharski.studentnotes.utils.Const.FIREBASE_DATABASE_URL;
+
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -12,6 +17,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.FirebaseDatabase;
 import com.jkucharski.studentnotes.databinding.FragmentSubjectListBinding;
 
 import java.util.ArrayList;
@@ -20,13 +28,12 @@ import java.util.List;
 public class SubjectListFragment extends Fragment {
 
     FragmentSubjectListBinding binding;
-    List<SubjectDC> subjectDCList = new ArrayList<>();
-    RoomDB database;
     SubjectAdapter subjectAdapter;
     RecyclerView subjectRecyclerView;
     CreateSubjectFragment createSubjectFragment;
     FragmentManager fm;
     FragmentTransaction ft;
+    String firebaseReference;
 
     SubjectListFragment(FragmentManager fm) {
         this.fm = fm;
@@ -34,25 +41,41 @@ public class SubjectListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         binding = FragmentSubjectListBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
-        database = RoomDB.getInstance(getContext());
-        subjectDCList = database.subjectDao().getAll();
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        subjectAdapter = new SubjectAdapter(fm, subjectDCList, getActivity());
+        firebaseReference = "Users/"+ FirebaseAuth.getInstance().getCurrentUser().getUid()+"/Subjects";
+        FirebaseDatabase.getInstance(FIREBASE_DATABASE_URL)
+                .getReference(firebaseReference).get()
+                .addOnSuccessListener(dataSnapshot -> {
+                    List<SubjectDC> subjectDCList = new ArrayList<>();
+                    for(DataSnapshot item_snapshot:dataSnapshot.getChildren()){
+                        SubjectDC subjectDC = item_snapshot.getValue(SubjectDC.class);
+                        subjectDCList.add(subjectDC);
+                    }
+                    subjectAdapter.setSubjects(subjectDCList);
+                });
+
+        subjectAdapter = new SubjectAdapter(fm);
         subjectRecyclerView = binding.recyclerViewSubject;
         subjectRecyclerView.setAdapter(subjectAdapter);
         subjectRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        binding.createSubjectButton.setOnClickListener(view -> {
-            createSubjectFragment = new CreateSubjectFragment(fm, database, subjectAdapter, subjectDCList);
+        binding.createSubjectButton.setOnClickListener(v -> {
+            createSubjectFragment = new CreateSubjectFragment(fm);
             ft = fm.beginTransaction();
             ft.replace(R.id.MainLayout, createSubjectFragment).addToBackStack(null);
             ft.commit();
         });
 
-        return binding.getRoot();
+
+
     }
 
 }

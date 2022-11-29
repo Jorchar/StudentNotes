@@ -1,6 +1,5 @@
 package com.jkucharski.studentnotes;
 
-import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,13 +23,13 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
 
     private List<SubjectDC> subjectDCList = new ArrayList<>();
     FragmentManager fm;
-    private Activity context;
-    private RoomDB database;
 
-    SubjectAdapter(FragmentManager fm, List<SubjectDC> subjectDCList, Activity context){
+    SubjectAdapter(FragmentManager fm){
         this.fm = fm;
+    }
+
+    public void setSubjects(List<SubjectDC> subjectDCList){
         this.subjectDCList = subjectDCList;
-        this.context = context;
         notifyDataSetChanged();
     }
 
@@ -45,37 +44,30 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
     @Override
     public void onBindViewHolder(@NonNull SubjectVH holder, int position) {
         SubjectDC subjectDC = subjectDCList.get(position);
-        database = RoomDB.getInstance(context);
         holder.subjectNameTV.setText(subjectDC.getName());
         holder.subjectDescTV.setText(subjectDC.getDescription());
 
-        holder.subjectBackground.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                NotesListFragment notesListFragment = new NotesListFragment(fm, subjectDC.getID());
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.MainLayout, notesListFragment).addToBackStack(null);
-                ft.commit();
-            }
+        holder.subjectBackground.setOnClickListener(view -> {
+            NotesListFragment notesListFragment = new NotesListFragment(fm, subjectDC.getId());
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.MainLayout, notesListFragment).addToBackStack(null);
+            ft.commit();
         });
 
-        holder.expandButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (holder.hiddenSubjectView.getVisibility() == View.VISIBLE) {
-                    TransitionManager.beginDelayedTransition(holder.subjectCardView,
-                            new AutoTransition());
-                    holder.hiddenSubjectView.setVisibility(View.GONE);
-                    holder.expandButton.setImageResource(R.drawable.ic_baseline_expand_more_24);
-                }
+        holder.expandButton.setOnClickListener(view -> {
+            if (holder.hiddenSubjectView.getVisibility() == View.VISIBLE) {
+                TransitionManager.beginDelayedTransition(holder.subjectCardView,
+                        new AutoTransition());
+                holder.hiddenSubjectView.setVisibility(View.GONE);
+                holder.expandButton.setImageResource(R.drawable.ic_baseline_expand_more_24);
+            }
 
-                else {
+            else {
 
-                    TransitionManager.beginDelayedTransition(holder.subjectCardView,
-                            new AutoTransition());
-                    holder.hiddenSubjectView.setVisibility(View.VISIBLE);
-                    holder.expandButton.setImageResource(R.drawable.ic_baseline_expand_less_24);
-                }
+                TransitionManager.beginDelayedTransition(holder.subjectCardView,
+                        new AutoTransition());
+                holder.hiddenSubjectView.setVisibility(View.VISIBLE);
+                holder.expandButton.setImageResource(R.drawable.ic_baseline_expand_less_24);
             }
         });
     }

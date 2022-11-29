@@ -1,7 +1,6 @@
 package com.jkucharski.studentnotes;
 
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
@@ -9,19 +8,19 @@ import java.io.Serializable;
 @Entity(tableName = "note_list")
 public class NoteDC implements Serializable {
 
-    @PrimaryKey(autoGenerate = true)
-    private int ID;
+    @PrimaryKey
+    private int id;
     private int subject;
     private String name;
-    private String content;
-    private boolean active;
+    private String content = "";
+    private Boolean active = true;
 
-    public int getID() {
-        return ID;
+    public int getId() {
+        return id;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getSubject() {
@@ -48,14 +47,14 @@ public class NoteDC implements Serializable {
         this.content = content;
     }
 
-    public boolean isActive() {
+    public NoteDC() {
+    }
+
+    public Boolean getActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
-    }
-
-    public NoteDC() {
     }
 }
