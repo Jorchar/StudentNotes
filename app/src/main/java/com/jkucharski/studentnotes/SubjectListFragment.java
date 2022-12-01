@@ -56,13 +56,15 @@ public class SubjectListFragment extends Fragment {
                 .addOnSuccessListener(dataSnapshot -> {
                     List<SubjectDC> subjectDCList = new ArrayList<>();
                     for(DataSnapshot item_snapshot:dataSnapshot.getChildren()){
-                        SubjectDC subjectDC = item_snapshot.getValue(SubjectDC.class);
-                        subjectDCList.add(subjectDC);
+                        if((Boolean)item_snapshot.child("active").getValue()){
+                            SubjectDC subjectDC = item_snapshot.getValue(SubjectDC.class);
+                            subjectDCList.add(subjectDC);
+                        }
                     }
                     subjectAdapter.setSubjects(subjectDCList);
                 });
 
-        subjectAdapter = new SubjectAdapter(fm);
+        subjectAdapter = new SubjectAdapter(fm, firebaseReference);
         subjectRecyclerView = binding.recyclerViewSubject;
         subjectRecyclerView.setAdapter(subjectAdapter);
         subjectRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

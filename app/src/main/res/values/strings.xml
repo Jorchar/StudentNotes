@@ -4,6 +4,7 @@
     <string name="subject_name_hint">Type in subject name</string>
     <string name="subject_desc_hint">Type in subject description</string>
     <string name="create_subject_button">CREATE SUBJECT</string>
+    <string name="edit_subject_button">EDIT SUBJECT</string>
     <string name="subject_background">Subject Background</string>
     <string name="expand_subject_button">Expand subject</string>
     <string name="capture_image">Capture Image</string>
@@ -44,4 +45,6 @@
         <item>Heading 3</item>
         <item>Heading 4</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

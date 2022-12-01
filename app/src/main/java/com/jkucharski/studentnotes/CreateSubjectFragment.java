@@ -43,7 +43,7 @@ public class CreateSubjectFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-    binding.confirmNewSubjectButton.setOnClickListener(view1 -> {
+        binding.confirmNewSubjectButton.setOnClickListener(view1 -> {
         String subjectName = binding.subjectNameInput.getText().toString();
         String subjectDesc = binding.subjectDescriptionInput.getText().toString();
 
