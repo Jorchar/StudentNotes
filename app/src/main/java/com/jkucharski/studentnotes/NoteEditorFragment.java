@@ -1,20 +1,33 @@
 package com.jkucharski.studentnotes;
 
+import static android.app.Activity.RESULT_OK;
+import static com.jkucharski.studentnotes.utils.Const.CAMERA_PRM_CODE;
 import static com.jkucharski.studentnotes.utils.Const.FIREBASE_DATABASE_URL;
 
-import android.content.ActivityNotFoundException;
+import android.Manifest;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +47,10 @@ import com.jkucharski.studentnotes.databinding.FragmentNoteEditorBinding;
 import org.apache.commons.codec.binary.Base64;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import jp.wasabeef.richeditor.RichEditor;
 
@@ -45,8 +62,10 @@ public class NoteEditorFragment extends Fragment {
     EditorNavigationBarBinding navigationBar;
     private RichEditor mEditor;
     String firebaseReference;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
     DatabaseReference ref;
+    ActivityResultLauncher<Intent> activityResultLauncher;
+    Uri imageUri;
+    String defineImageInHTML;
 
     NoteEditorFragment(FragmentManager fm, String firebaseReference) {
         this.fm = fm;
@@ -56,26 +75,18 @@ public class NoteEditorFragment extends Fragment {
     }
 
     private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        try {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            Bundle extras = data.getExtras();
 
-            Bitmap bitmap = (Bitmap) extras.get("data");
-            ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArray);
-            byte[] imgBytes = byteArray.toByteArray();
-            String test = "data:image/jpeg;base64,";
-            test += Base64.encodeBase64String(imgBytes);
-            mEditor.insertImage(test, "", 350, 350);
+        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.CAMERA}, CAMERA_PRM_CODE);
+        }else{
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.TITLE, timeStamp);
+            imageUri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+            activityResultLauncher.launch(takePictureIntent);
         }
     }
 
@@ -91,6 +102,26 @@ public class NoteEditorFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
+                        ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArray);
+                        byte[] imgBytes = byteArray.toByteArray();
+                        defineImageInHTML = "data:image/jpeg;base64,";
+                        defineImageInHTML += Base64.encodeBase64String(imgBytes);
+                        mEditor.insertImage(defineImageInHTML, "", bitmap.getWidth()/3, bitmap.getHeight()/3);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

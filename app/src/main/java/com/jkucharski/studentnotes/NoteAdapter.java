@@ -44,7 +44,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteVH> {
         NoteDC noteDC = noteDCList.get(position);
         holder.noteNameTV.setText(noteDC.getName());
         holder.noteBackground.setOnClickListener(view -> {
-            NoteEditorFragment noteEditorFragment = new NoteEditorFragment(fm, firebaseReference+noteDC.getId());
+            NoteEditorFragment noteEditorFragment = new NoteEditorFragment(fm, firebaseReference+"/"+noteDC.getId());
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.MainLayout, noteEditorFragment).addToBackStack(null);
             ft.commit();

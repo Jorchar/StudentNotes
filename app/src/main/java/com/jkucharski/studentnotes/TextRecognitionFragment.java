@@ -1,12 +1,26 @@
 package com.jkucharski.studentnotes;
 
+import static android.app.Activity.RESULT_OK;
+import static com.jkucharski.studentnotes.utils.Const.CAMERA_PRM_CODE;
+
+import android.Manifest;
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -26,13 +40,21 @@ import com.google.mlkit.vision.text.TextRecognizer;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 import com.jkucharski.studentnotes.databinding.FragmentTextRecognitionBinding;
 
+import org.apache.commons.codec.binary.Base64;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class TextRecognitionFragment extends Fragment {
 
     FragmentTextRecognitionBinding binding;
     FragmentManager fm;
     Bitmap imageBitmap;
     TextRecognizer recognizer;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    ActivityResultLauncher<Intent> activityResultLauncher;
+    Uri imageUri;
 
     public TextRecognitionFragment(FragmentManager fm) {
         this.fm = fm;
@@ -62,22 +84,39 @@ public class TextRecognitionFragment extends Fragment {
         return binding.getRoot();
     }
 
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        try {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            Bundle extras = data.getExtras();
-            imageBitmap = (Bitmap) extras.get("data");
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-            binding.imageView.setImageBitmap(imageBitmap);
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    try {
+                        imageBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
+                        binding.imageView.setImageBitmap(imageBitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
+
+    }
+
+    private void dispatchTakePictureIntent() {
+        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.CAMERA}, CAMERA_PRM_CODE);
+        }else{
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.TITLE, timeStamp);
+            imageUri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+            activityResultLauncher.launch(takePictureIntent);
         }
     }
 
@@ -88,6 +127,6 @@ public class TextRecognitionFragment extends Fragment {
         Task<Text> result =
                 recognizer.process(image)
                         .addOnSuccessListener(visionText -> binding.covertedTextDisplay.setText(visionText.getText()))
-                        .addOnFailureListener(e -> Toast.makeText(getContext(), "FUCK", Toast.LENGTH_SHORT).show());
+                        .addOnFailureListener(e -> Toast.makeText(getContext(), "Something went wrong!", Toast.LENGTH_SHORT).show());
     }
 }
