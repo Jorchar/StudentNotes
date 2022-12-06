@@ -5,7 +5,6 @@ import static com.jkucharski.studentnotes.utils.Const.CAMERA_PRM_CODE;
 import static com.jkucharski.studentnotes.utils.Const.FIREBASE_DATABASE_URL;
 
 import android.Manifest;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -36,20 +35,25 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.jkucharski.studentnotes.databinding.EditorNavigationBarBinding;
 import com.jkucharski.studentnotes.databinding.FragmentNoteEditorBinding;
-
-import org.apache.commons.codec.binary.Base64;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
 
 import jp.wasabeef.richeditor.RichEditor;
@@ -62,10 +66,12 @@ public class NoteEditorFragment extends Fragment {
     EditorNavigationBarBinding navigationBar;
     private RichEditor mEditor;
     String firebaseReference;
+    FirebaseStorage storage;
+    StorageReference storageReference;
     DatabaseReference ref;
     ActivityResultLauncher<Intent> activityResultLauncher;
-    Uri imageUri;
-    String defineImageInHTML;
+    File photoFile = null;
+    Uri photoUri;
 
     NoteEditorFragment(FragmentManager fm, String firebaseReference) {
         this.fm = fm;
@@ -74,18 +80,28 @@ public class NoteEditorFragment extends Fragment {
                 .child("content");
     }
 
-    private void dispatchTakePictureIntent() {
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpeg",    /* suffix */
+                storageDir      /* directory */
+        );
+        return image;
+    }
 
-        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+    private void dispatchTakePictureIntent() throws IOException {
+        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.CAMERA}, CAMERA_PRM_CODE);
         }else{
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            ContentValues values = new ContentValues();
-            values.put(MediaStore.Images.Media.TITLE, timeStamp);
-            imageUri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            photoFile = createImageFile();
 
+            photoUri = FileProvider.getUriForFile(getActivity(), "com.jkucharski.studentnotes.provider", photoFile);
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,photoUri);
+            takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             activityResultLauncher.launch(takePictureIntent);
         }
     }
@@ -103,23 +119,14 @@ public class NoteEditorFragment extends Fragment {
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
 
-        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-            @Override
-            public void onActivityResult(ActivityResult result) {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    try {
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
-                        ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArray);
-                        byte[] imgBytes = byteArray.toByteArray();
-                        defineImageInHTML = "data:image/jpeg;base64,";
-                        defineImageInHTML += Base64.encodeBase64String(imgBytes);
-                        mEditor.insertImage(defineImageInHTML, "", bitmap.getWidth()/3, bitmap.getHeight()/3);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference(FirebaseAuth.getInstance().getUid() + "/images/");
 
-                }
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK) {
+                storageReference.child(photoFile.getName()).putFile(photoUri)
+                        .addOnSuccessListener(taskSnapshot -> storageReference.child(photoFile.getName()).getDownloadUrl()
+                                .addOnSuccessListener(uri -> mEditor.insertImage(uri.toString(), "picture", 350, 400)));
             }
         });
 
@@ -237,7 +244,13 @@ public class NoteEditorFragment extends Fragment {
 
 
 
-        navigationBar.actionInsertImage.setOnClickListener(v -> dispatchTakePictureIntent());
+        navigationBar.actionInsertImage.setOnClickListener(v -> {
+            try {
+                dispatchTakePictureIntent();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
         navigationBar.actionInsertVideo.setOnClickListener(v -> mEditor.insertVideo("https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4", 360));
 
