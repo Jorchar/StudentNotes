@@ -2,19 +2,14 @@ package com.jkucharski.studentnotes;
 
 import static android.app.Activity.RESULT_OK;
 import static com.jkucharski.studentnotes.utils.Const.CAMERA_PRM_CODE;
-
 import android.Manifest;
-import android.content.ActivityNotFoundException;
-import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
-
-
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -24,14 +19,12 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.text.Text;
@@ -39,10 +32,6 @@ import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.TextRecognizer;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 import com.jkucharski.studentnotes.databinding.FragmentTextRecognitionBinding;
-
-import org.apache.commons.codec.binary.Base64;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -54,7 +43,6 @@ public class TextRecognitionFragment extends Fragment {
     FragmentManager fm;
     Bitmap imageBitmap;
     TextRecognizer recognizer;
-    Uri imageUri;
     ActivityResultLauncher<Intent> activityResultLauncher;
     File photoFile = null;
     Uri photoUri;
@@ -73,6 +61,33 @@ public class TextRecognitionFragment extends Fragment {
                 storageDir      /* directory */
         );
         return image;
+    }
+
+    public int getCameraPhotoOrientation(Context context, Uri imageUri,
+                                         File imageFile) {
+        int rotate = 0;
+        try {
+            context.getContentResolver().notifyChange(imageUri, null);
+            ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
+            int orientation = exif.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL);
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    rotate = 270;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    rotate = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    rotate = 90;
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rotate;
     }
 
     private void dispatchTakePictureIntent() throws IOException {
@@ -109,36 +124,27 @@ public class TextRecognitionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-            @Override
-            public void onActivityResult(ActivityResult result) {
-                if (result.getResultCode() == RESULT_OK) {
-                    try {
-                        imageBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), photoUri);
-                        binding.imageView.setImageBitmap(imageBitmap);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK) {
+                try {
+                    imageBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), photoUri);
+                    binding.imageView.setImageBitmap(imageBitmap);
+                    int rotateImage = getCameraPhotoOrientation(getContext(), photoUri, photoFile);
+                    binding.imageView.setRotation(rotateImage);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         });
 
-        binding.captureImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    dispatchTakePictureIntent();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                binding.covertedTextDisplay.setText("");
+        binding.captureImageButton.setOnClickListener(view1 -> {
+            try {
+                dispatchTakePictureIntent();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+            binding.covertedTextDisplay.setText("");
         });
-        binding.detectTextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                detectTextFromImage();
-            }
-        });
+        binding.detectTextButton.setOnClickListener(view12 -> detectTextFromImage());
     }
 }
