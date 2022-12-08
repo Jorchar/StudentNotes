@@ -24,7 +24,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/subject_desc_hint"
-            tools:ignore="TextContrastCheck" />
+            tools:ignore="TextContrastCheck"
+            android:gravity="top"
+            android:minLines="2"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button

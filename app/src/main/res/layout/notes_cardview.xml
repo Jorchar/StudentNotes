@@ -9,7 +9,8 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/noteCardView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:minHeight="200dp"
         app:cardCornerRadius="15dp"
         app:cardElevation="5dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,7 +21,7 @@
             android:id="@+id/noteImageBG"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/ic_background1"
+            android:background="?attr/colorPrimaryVariant"
             android:contentDescription="@string/subject_background" />
 
         <TextView

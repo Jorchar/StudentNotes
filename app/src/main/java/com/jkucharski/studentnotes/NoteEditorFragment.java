@@ -48,6 +48,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.jkucharski.studentnotes.databinding.EditorNavigationBarBinding;
 import com.jkucharski.studentnotes.databinding.FragmentNoteEditorBinding;
+import com.jkucharski.studentnotes.utils.Const;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -143,14 +144,9 @@ public class NoteEditorFragment extends Fragment {
         });
 
         mEditor = (RichEditor) binding.textEditor;
-        mEditor.setEditorFontSize(16);
         mEditor.setEditorFontColor(Color.BLACK);
         //TODO editable note background
-        //mEditor.setEditorBackgroundColor(Color.BLUE);
-        //mEditor.setBackgroundColor(Color.BLUE);
-        //mEditor.setBackgroundResource(R.drawable.bg);
         mEditor.setPadding(10, 10, 10, 10);
-        //mEditor.setBackground("https://raw.githubusercontent.com/wasabeef/art/master/chip.jpg");
         mEditor.setPlaceholder("Insert text here...");
 
         navigationBar = binding.navigationBar;
@@ -191,6 +187,35 @@ public class NoteEditorFragment extends Fragment {
             }
         });
 
+        Spinner fontColorSpinner = navigationBar.fontColor;
+        ColorSpinnerAdapter fontColorAdapter = new ColorSpinnerAdapter(getContext(), Const.getColorList());
+        fontColorSpinner.setAdapter(fontColorAdapter);
+        fontColorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mEditor.setTextColor((Integer)fontColorAdapter.getItem(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        Spinner bgColorSpinner = navigationBar.bgColor;
+        ColorSpinnerAdapter bgColorAdapter = new ColorSpinnerAdapter(getContext(), Const.getColorList());
+        bgColorSpinner.setAdapter(bgColorAdapter);
+        bgColorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mEditor.setBackgroundColor((Integer)bgColorAdapter.getItem(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         navigationBar.actionUndo.setOnClickListener(v -> mEditor.undo());
 
@@ -207,26 +232,6 @@ public class NoteEditorFragment extends Fragment {
         navigationBar.actionStrikethrough.setOnClickListener(v -> mEditor.setStrikeThrough());
 
         navigationBar.actionUnderline.setOnClickListener(v -> mEditor.setUnderline());
-
-        navigationBar.actionTxtColor.setOnClickListener(new View.OnClickListener() {
-            private boolean isChanged;
-
-            @Override
-            public void onClick(View v) {
-                mEditor.setTextColor(isChanged ? Color.BLACK : Color.RED);
-                isChanged = !isChanged;
-            }
-        });
-
-        navigationBar.actionBgColor.setOnClickListener(new View.OnClickListener() {
-            private boolean isChanged;
-
-            @Override
-            public void onClick(View v) {
-                mEditor.setTextBackgroundColor(isChanged ? Color.TRANSPARENT : Color.YELLOW);
-                isChanged = !isChanged;
-            }
-        });
 
         navigationBar.actionAlignLeft.setOnClickListener(v -> mEditor.setAlignLeft());
 
@@ -251,8 +256,6 @@ public class NoteEditorFragment extends Fragment {
                 e.printStackTrace();
             }
         });
-
-        navigationBar.actionInsertVideo.setOnClickListener(v -> mEditor.insertVideo("https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4", 360));
 
         navigationBar.actionInsertCheckbox.setOnClickListener(v -> mEditor.insertTodo());
 

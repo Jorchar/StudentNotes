@@ -35,7 +35,7 @@
                     android:id="@+id/subjectImageBG"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/ic_background1"
+                    android:background="?attr/colorPrimaryVariant"
                     android:contentDescription="@string/subject_background" />
 
                 <TextView
@@ -93,7 +93,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/fixedSubjectLayout">
+                app:layout_constraintTop_toBottomOf="@+id/fixedSubjectLayout"
+                android:background="?attr/colorOnPrimary">
 
                 <TextView
                     android:id="@+id/subjectDescriptionTV"
