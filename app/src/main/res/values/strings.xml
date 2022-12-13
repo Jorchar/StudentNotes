@@ -9,6 +9,7 @@
     <string name="expand_subject_button">Expand subject</string>
     <string name="capture_image">Capture Image</string>
     <string name="convert_to_text">Convert to Text</string>
+    <string name="copy_to_clipboard">Copy to clipboard</string>
 
     <string name="login">LOGIN</string>
     <string name="logout">LOGOUT</string>
