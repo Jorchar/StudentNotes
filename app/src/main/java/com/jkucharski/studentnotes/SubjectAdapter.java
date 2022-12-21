@@ -52,7 +52,6 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
         SubjectDC subjectDC = subjectDCList.get(position);
         holder.subjectNameTV.setText(subjectDC.getName());
         holder.subjectDescTV.setText(subjectDC.getDescription());
-        firebaseReference += "/" + subjectDC.getId();
 
         holder.subjectBackground.setOnClickListener(view -> {
             NotesListFragment notesListFragment = new NotesListFragment(fm, subjectDC.getId());
@@ -63,13 +62,13 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
 
         holder.deleteButton.setOnClickListener(view -> {
             FirebaseDatabase.getInstance(FIREBASE_DATABASE_URL)
-                    .getReference(firebaseReference).child("active").setValue(false);
+                    .getReference(firebaseReference + "/" + subjectDC.getId()).child("active").setValue(false);
             subjectDCList.remove(position);
             notifyItemRemoved(position);
         });
 
         holder.editButton.setOnClickListener(view -> {
-            EditSubjectFragment editSubjectFragment = new EditSubjectFragment(fm, subjectDC, firebaseReference);
+            EditSubjectFragment editSubjectFragment = new EditSubjectFragment(fm, subjectDC, firebaseReference + "/" + subjectDC.getId());
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.MainLayout, editSubjectFragment).addToBackStack(null);
             ft.commit();
