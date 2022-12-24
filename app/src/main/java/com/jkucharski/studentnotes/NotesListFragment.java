@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.InputType;
@@ -64,14 +65,16 @@ public class NotesListFragment extends Fragment {
                 .addOnSuccessListener(dataSnapshot -> {
                     noteDCList.clear();
                     for(DataSnapshot item_snapshot:dataSnapshot.getChildren()){
-                        NoteDC noteDC = item_snapshot.getValue(NoteDC.class);
-                        noteDCList.add(noteDC);
+                        if((Boolean)item_snapshot.child("active").getValue()){
+                            NoteDC noteDC = item_snapshot.getValue(NoteDC.class);
+                            noteDCList.add(noteDC);
+                        }
                     }
                     noteAdapter.setNote(noteDCList);
                 });
 
         noteRecyclerView = binding.recyclerViewNotes;
-        noteAdapter = new NoteAdapter(fm, firebaseReference+"/Notes");
+        noteAdapter = new NoteAdapter(fm, firebaseReference+"/Notes", getContext());
         noteRecyclerView.setAdapter(noteAdapter);
         noteRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
@@ -83,11 +86,9 @@ public class NotesListFragment extends Fragment {
             builder.setView(input);
             builder.setPositiveButton("OK", (dialog, which) -> {
                 noteName = input.getText().toString();
-
                 NoteDC noteDC = new NoteDC();
                 noteDC.setName(noteName);
                 noteDC.setSubject(subjectId);
-
                 FirebaseDatabase.getInstance(FIREBASE_DATABASE_URL).getReference(firebaseReference)
                         .child("Notes").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -95,9 +96,7 @@ public class NotesListFragment extends Fragment {
                         int size = (int) snapshot.getChildrenCount();
                         noteDC.setId(size);
                         FirebaseDatabase.getInstance(FIREBASE_DATABASE_URL).getReference(firebaseReference+"/Notes")
-                                .child(Integer.toString(noteDC.getId())).setValue(noteDC).addOnSuccessListener(unused -> {
-
-                                });
+                                .child(Integer.toString(noteDC.getId())).setValue(noteDC);
                         noteDCList.add(noteDC);
                         noteAdapter.setNote(noteDCList);
                     }

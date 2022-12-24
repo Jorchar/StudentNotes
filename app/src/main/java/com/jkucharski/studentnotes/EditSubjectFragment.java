@@ -53,7 +53,11 @@ public class EditSubjectFragment extends Fragment {
             subjectDC.setDescription(subjectDesc);
 
             FirebaseDatabase.getInstance(FIREBASE_DATABASE_URL).getReference(firebaseReference)
-                    .setValue(subjectDC).addOnSuccessListener(unused -> {
+                    .child("name")
+                    .setValue(subjectName);
+            FirebaseDatabase.getInstance(FIREBASE_DATABASE_URL).getReference(firebaseReference)
+                    .child("description")
+                    .setValue(subjectDesc).addOnSuccessListener(unused -> {
                         fm.popBackStack();
                     });
         });
