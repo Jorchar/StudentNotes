@@ -32,6 +32,7 @@
     <string name="loginSuccess">Logged successfully!</string>
     <string name="mailVerify">Please verify your email!</string>
     <string name="loginFailed">Failed to login! Please check your credentials!</string>
+    <string name="language">Language</string>
 
     <string-array name="font_size_array">
         <item>16</item>
@@ -49,4 +50,10 @@
         <item>Heading 3</item>
         <item>Heading 4</item>
     </string-array>
+
+    <string-array name="language_array">
+        <item>English</item>
+        <item>Polski</item>
+    </string-array>
+
 </resources>

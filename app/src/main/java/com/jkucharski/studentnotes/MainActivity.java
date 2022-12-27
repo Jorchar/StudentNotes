@@ -2,12 +2,14 @@ package com.jkucharski.studentnotes;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +23,11 @@ public class MainActivity extends AppCompatActivity {
     AccountSettingsFragment accountSettingsFragment;
     FragmentManager fm;
     FragmentTransaction ft;
+
+    @Override
+    protected void onNightModeChanged(int mode) {
+        super.onNightModeChanged(mode);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

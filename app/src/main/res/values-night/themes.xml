@@ -2,12 +2,12 @@
     <!-- Base application theme. -->
     <style name="Theme.StudentNotes" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#1e621e</item>
-        <item name="colorPrimaryVariant">#194d19</item>
-        <item name="colorOnPrimary">#123b12</item>
+        <item name="colorPrimary">#267326</item>
+        <item name="colorPrimaryVariant">#339933</item>
+        <item name="colorOnPrimary">#8cd98c</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">#184e18</item>
-        <item name="colorSecondaryVariant">#123b12</item>
+        <item name="colorSecondary">#123b12</item>
+        <item name="colorSecondaryVariant">#339933</item>
         <item name="colorOnSecondary">#0a100a</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>

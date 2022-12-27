@@ -21,8 +21,9 @@
             android:name=".CropperActivity"
             android:exported="false" />
         <activity
+
             android:name=".MainActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:configChanges="uiMode|orientation|screenSize|keyboardHidden"
             android:exported="true">
             <meta-data
                 android:name="com.google.firebase.ml.vision.DEPENDENCIES"
