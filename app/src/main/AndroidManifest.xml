@@ -18,11 +18,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StudentNotes">
         <activity
-            android:name=".CropperActivity"
+            android:name=".ui.editor.CropperActivity"
             android:exported="false" />
         <activity
 
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:configChanges="uiMode|orientation|screenSize|keyboardHidden"
             android:exported="true">
             <meta-data

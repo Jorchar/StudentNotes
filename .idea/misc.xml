@@ -24,9 +24,10 @@
         <entry key="..\:/Users/Browarus/AndroidStudioProjects/StudentNotes/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/Browarus/AndroidStudioProjects/StudentNotes/app/src/main/res/layout/bg_spinner.xml" value="0.48020833333333335" />
         <entry key="..\:/Users/Browarus/AndroidStudioProjects/StudentNotes/app/src/main/res/layout/color_spinner_item.xml" value="0.48020833333333335" />
+        <entry key="..\:/Users/Browarus/AndroidStudioProjects/StudentNotes/app/src/main/res/layout/create_note_dialog.xml" value="0.48020833333333335" />
         <entry key="..\:/Users/Browarus/AndroidStudioProjects/StudentNotes/app/src/main/res/layout/editor_navigation_bar.xml" value="0.3037486218302095" />
         <entry key="..\:/Users/Browarus/AndroidStudioProjects/StudentNotes/app/src/main/res/layout/fragment_account_settings.xml" value="0.5" />
-        <entry key="..\:/Users/Browarus/AndroidStudioProjects/StudentNotes/app/src/main/res/layout/fragment_create_subject.xml" value="0.2942708333333333" />
+        <entry key="..\:/Users/Browarus/AndroidStudioProjects/StudentNotes/app/src/main/res/layout/fragment_create_subject.xml" value="0.5" />
         <entry key="..\:/Users/Browarus/AndroidStudioProjects/StudentNotes/app/src/main/res/layout/fragment_cropper.xml" value="0.29270833333333335" />
         <entry key="..\:/Users/Browarus/AndroidStudioProjects/StudentNotes/app/src/main/res/layout/fragment_edit_subject.xml" value="0.48020833333333335" />
         <entry key="..\:/Users/Browarus/AndroidStudioProjects/StudentNotes/app/src/main/res/layout/fragment_forgot_password.xml" value="0.4583333333333333" />

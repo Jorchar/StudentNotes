@@ -1,4 +1,6 @@
-package com.jkucharski.studentnotes;
+package com.jkucharski.studentnotes.model;
+
+import android.graphics.Color;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -12,6 +14,7 @@ public class SubjectDC implements Serializable {
     private int id;
     private String name;
     private String description;
+    private Integer color = Color.parseColor("#339933");
     private Boolean active = true;
 
     public int getId() { return id; }
@@ -32,6 +35,14 @@ public class SubjectDC implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getColor() {
+        return color;
+    }
+
+    public void setColor(Integer color) {
+        this.color = color;
     }
 
     public Boolean getActive() {

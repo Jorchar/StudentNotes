@@ -1,20 +1,24 @@
-package com.jkucharski.studentnotes;
+package com.jkucharski.studentnotes.ui;
+
+import static com.jkucharski.studentnotes.utils.Const.CAMERA_PRM_CODE;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.jkucharski.studentnotes.R;
+import com.jkucharski.studentnotes.ui.auth.LoginFragment;
+import com.jkucharski.studentnotes.ui.subject.SubjectListFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if(permission != PackageManager.PERMISSION_GRANTED){
+        int diskPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(diskPermission != PackageManager.PERMISSION_GRANTED ){
             ActivityCompat.requestPermissions(this,
                     new String[]{
                             Manifest.permission.READ_EXTERNAL_STORAGE,

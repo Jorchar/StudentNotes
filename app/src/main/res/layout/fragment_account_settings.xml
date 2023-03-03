@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AccountSettingsFragment">
+    tools:context=".ui.AccountSettingsFragment">
 
     <TextView
         android:id="@+id/loginTitle"
@@ -28,7 +28,8 @@
         android:layout_margin="16dp"
         android:padding="6dp"
         app:layout_constraintBottom_toTopOf="@id/logOutButton"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"/>
 
     <Spinner
         android:id="@+id/languageSpinner"
@@ -38,7 +39,8 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintTop_toTopOf="@id/languageTextView"
         app:layout_constraintStart_toEndOf="@id/languageTextView"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/logOutButton"

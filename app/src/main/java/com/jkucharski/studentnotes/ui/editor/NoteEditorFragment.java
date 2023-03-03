@@ -1,4 +1,4 @@
-package com.jkucharski.studentnotes;
+package com.jkucharski.studentnotes.ui.editor;
 
 import static android.app.Activity.RESULT_OK;
 import static com.jkucharski.studentnotes.utils.Const.CAMERA_PRM_CODE;
@@ -7,13 +7,10 @@ import static com.jkucharski.studentnotes.utils.Const.FIREBASE_DATABASE_URL;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -35,8 +32,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -45,16 +40,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.jkucharski.studentnotes.R;
 import com.jkucharski.studentnotes.databinding.EditorNavigationBarBinding;
 import com.jkucharski.studentnotes.databinding.FragmentNoteEditorBinding;
 import com.jkucharski.studentnotes.utils.Const;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
 import java.util.Date;
 
 import jp.wasabeef.richeditor.RichEditor;
@@ -74,7 +67,7 @@ public class NoteEditorFragment extends Fragment {
     File photoFile = null;
     Uri photoUri;
 
-    NoteEditorFragment(FragmentManager fm, String firebaseReference) {
+    public NoteEditorFragment(FragmentManager fm, String firebaseReference) {
         this.fm = fm;
         this.firebaseReference = firebaseReference;
         ref = FirebaseDatabase.getInstance(FIREBASE_DATABASE_URL).getReference(firebaseReference)
@@ -93,12 +86,11 @@ public class NoteEditorFragment extends Fragment {
         return image;
     }
 
-    private void dispatchTakePictureIntent() throws IOException {
+    private void takePictureIntent() throws IOException {
         if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.CAMERA}, CAMERA_PRM_CODE);
         }else{
             photoFile = createImageFile();
-
             photoUri = FileProvider.getUriForFile(getActivity(), "com.jkucharski.studentnotes.provider", photoFile);
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,photoUri);
@@ -152,7 +144,7 @@ public class NoteEditorFragment extends Fragment {
         navigationBar = binding.navigationBar;
 
         Spinner fontSizeSpinner = navigationBar.fontSizeNumber;
-        ArrayAdapter<CharSequence> fontSizeAdapter = ArrayAdapter.createFromResource(getContext(), R.array.font_size_array, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> fontSizeAdapter = ArrayAdapter.createFromResource(getContext(),R.array.font_size_array, android.R.layout.simple_spinner_item);
         fontSizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         fontSizeSpinner.setAdapter(fontSizeAdapter);
         fontSizeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -161,11 +153,8 @@ public class NoteEditorFragment extends Fragment {
                 String number = adapterView.getItemAtPosition(i).toString().substring(0, 2);
                 mEditor.setEditorFontSize(Integer.parseInt(number));
             }
-
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
+            public void onNothingSelected(AdapterView<?> adapterView) { }
         });
 
         Spinner headingSpinner = navigationBar.headingNumber;
@@ -180,11 +169,8 @@ public class NoteEditorFragment extends Fragment {
                     mEditor.setHeading(Integer.parseInt(heading));
                 }
             }
-
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
+            public void onNothingSelected(AdapterView<?> adapterView) { }
         });
 
         Spinner fontColorSpinner = navigationBar.fontColor;
@@ -251,7 +237,7 @@ public class NoteEditorFragment extends Fragment {
 
         navigationBar.actionInsertImage.setOnClickListener(v -> {
             try {
-                dispatchTakePictureIntent();
+                takePictureIntent();
             } catch (IOException e) {
                 e.printStackTrace();
             }

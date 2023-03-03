@@ -1,4 +1,4 @@
-package com.jkucharski.studentnotes;
+package com.jkucharski.studentnotes.ui.auth;
 
 import android.os.Bundle;
 

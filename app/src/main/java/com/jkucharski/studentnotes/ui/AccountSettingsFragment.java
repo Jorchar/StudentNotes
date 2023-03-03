@@ -1,4 +1,4 @@
-package com.jkucharski.studentnotes;
+package com.jkucharski.studentnotes.ui;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -8,7 +8,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -19,11 +18,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.Spinner;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.jkucharski.studentnotes.R;
 import com.jkucharski.studentnotes.databinding.FragmentAccountSettingsBinding;
+import com.jkucharski.studentnotes.ui.auth.LoginFragment;
 
 import java.util.Locale;
 

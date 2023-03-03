@@ -20,4 +20,15 @@ public class Const {
 
         return colorList;
     }
+
+    public static List<Integer> getCardColorList(){
+        List<Integer> colorList = new ArrayList<>();
+
+        colorList.add(Color.parseColor("#339933"));
+        colorList.add(Color.parseColor("#D9CCD9"));
+        colorList.add(Color.parseColor("#CCD9D9"));
+        colorList.add(Color.parseColor("#D2D9CC"));
+        colorList.add(Color.parseColor("#D9D2CC"));
+        return colorList;
+    }
 }

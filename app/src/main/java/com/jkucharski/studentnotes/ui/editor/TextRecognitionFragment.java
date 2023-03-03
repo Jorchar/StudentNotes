@@ -1,4 +1,4 @@
-package com.jkucharski.studentnotes;
+package com.jkucharski.studentnotes.ui.editor;
 
 import static android.app.Activity.RESULT_OK;
 import static com.jkucharski.studentnotes.utils.Const.CAMERA_PRM_CODE;
@@ -21,7 +21,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -36,13 +35,11 @@ import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.TextRecognizer;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 import com.jkucharski.studentnotes.databinding.FragmentTextRecognitionBinding;
-import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
 
 public class TextRecognitionFragment extends Fragment {
 
@@ -115,11 +112,15 @@ public class TextRecognitionFragment extends Fragment {
 
     private void detectTextFromImage() {
         recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
-        InputImage image = InputImage.fromBitmap(imageBitmap, 0);
-        Task<Text> result =
-                recognizer.process(image)
-                        .addOnSuccessListener(visionText -> binding.covertedTextDisplay.setText(visionText.getText()))
-                        .addOnFailureListener(e -> Toast.makeText(getContext(), "Something went wrong!", Toast.LENGTH_SHORT).show());
+        if(imageBitmap != null){
+            InputImage image = InputImage.fromBitmap(imageBitmap, 0);
+            Task<Text> result =
+                    recognizer.process(image)
+                            .addOnSuccessListener(visionText -> binding.covertedTextDisplay.setText(visionText.getText()))
+                            .addOnFailureListener(e -> Toast.makeText(getContext(), "Problem with recognizing text!", Toast.LENGTH_SHORT).show());
+        }else{
+            Toast.makeText(getContext(), "Picture not found!", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -151,6 +152,7 @@ public class TextRecognitionFragment extends Fragment {
                     binding.imageView.setRotation(rotateImage);
                     try {
                         imageBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), cropImageUri);
+                        detectTextFromImage();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -177,5 +179,12 @@ public class TextRecognitionFragment extends Fragment {
             Toast.makeText(getActivity(), "Saved to clip board", Toast.LENGTH_SHORT).show();
             fm.popBackStack();
         });
+
+        try {
+            dispatchTakePictureIntent();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

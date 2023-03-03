@@ -1,4 +1,4 @@
-package com.jkucharski.studentnotes;
+package com.jkucharski.studentnotes.ui.subject;
 
 import static com.jkucharski.studentnotes.utils.Const.FIREBASE_DATABASE_URL;
 import android.os.Bundle;
@@ -16,7 +16,10 @@ import android.view.ViewGroup;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
+import com.jkucharski.studentnotes.R;
+import com.jkucharski.studentnotes.SubjectAdapter;
 import com.jkucharski.studentnotes.databinding.FragmentSubjectListBinding;
+import com.jkucharski.studentnotes.model.SubjectDC;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +34,7 @@ public class SubjectListFragment extends Fragment {
     FragmentTransaction ft;
     String firebaseReference;
 
-    SubjectListFragment(FragmentManager fm) {
+    public SubjectListFragment(FragmentManager fm) {
         this.fm = fm;
     }
 
@@ -71,9 +74,6 @@ public class SubjectListFragment extends Fragment {
             ft.replace(R.id.MainLayout, createSubjectFragment).addToBackStack(null);
             ft.commit();
         });
-
-
-
     }
 
 }

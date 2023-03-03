@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CreateSubjectFragment">
+    tools:context=".ui.subject.CreateSubjectFragment">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/subjectDescriptionLayout"
@@ -14,7 +14,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/confirmNewSubjectButton"
+        app:layout_constraintBottom_toTopOf="@+id/subject_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/subjectNameLayout">
@@ -28,6 +28,21 @@
             android:gravity="top"
             android:minLines="2"/>
     </com.google.android.material.textfield.TextInputLayout>
+
+    <Spinner
+        android:id="@+id/subject_color"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/bg_spinner"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/confirmNewSubjectButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/subjectDescriptionInput"
+        tools:ignore="NotSibling" />
 
     <Button
         android:id="@+id/confirmNewSubjectButton"

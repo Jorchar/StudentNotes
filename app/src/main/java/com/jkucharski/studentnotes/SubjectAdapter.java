@@ -19,6 +19,9 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.FirebaseDatabase;
+import com.jkucharski.studentnotes.model.SubjectDC;
+import com.jkucharski.studentnotes.ui.subject.EditSubjectFragment;
+import com.jkucharski.studentnotes.ui.subject.NotesListFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +32,7 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
     String firebaseReference;
     FragmentManager fm;
 
-    SubjectAdapter(FragmentManager fm, String firebaseReference){
+    public SubjectAdapter(FragmentManager fm, String firebaseReference){
         this.fm = fm;
         this.firebaseReference = firebaseReference;
     }
@@ -52,6 +55,7 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
         SubjectDC subjectDC = subjectDCList.get(position);
         holder.subjectNameTV.setText(subjectDC.getName());
         holder.subjectDescTV.setText(subjectDC.getDescription());
+        holder.subjectBackground.setBackgroundColor(subjectDC.getColor());
 
         holder.subjectBackground.setOnClickListener(view -> {
             NotesListFragment notesListFragment = new NotesListFragment(fm, subjectDC.getId());

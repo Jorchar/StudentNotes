@@ -1,7 +1,8 @@
-package com.jkucharski.studentnotes;
+package com.jkucharski.studentnotes.ui.subject;
 
 import static com.jkucharski.studentnotes.utils.Const.FIREBASE_DATABASE_URL;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,20 +11,28 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Spinner;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.jkucharski.studentnotes.NoteAdapter;
+import com.jkucharski.studentnotes.R;
 import com.jkucharski.studentnotes.databinding.FragmentNotesListBinding;
+import com.jkucharski.studentnotes.model.NoteDC;
+import com.jkucharski.studentnotes.ui.editor.ColorSpinnerAdapter;
+import com.jkucharski.studentnotes.utils.Const;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +47,10 @@ public class NotesListFragment extends Fragment {
     String noteName;
     String firebaseReference;
     List<NoteDC> noteDCList = new ArrayList<>();
+    Integer noteColor = Color.parseColor("#339933");
 
 
-
-    NotesListFragment(FragmentManager fm, int subjectId) {
+    public NotesListFragment(FragmentManager fm, int subjectId) {
         this.fm = fm;
         this.subjectId = subjectId;
     }
@@ -64,6 +73,8 @@ public class NotesListFragment extends Fragment {
                 .getReference(firebaseReference+"/Notes").get()
                 .addOnSuccessListener(dataSnapshot -> {
                     noteDCList.clear();
+                    noteAdapter.setNote(noteDCList);
+                    noteAdapter.notifyDataSetChanged();
                     for(DataSnapshot item_snapshot:dataSnapshot.getChildren()){
                         if((Boolean)item_snapshot.child("active").getValue()){
                             NoteDC noteDC = item_snapshot.getValue(NoteDC.class);
@@ -81,14 +92,28 @@ public class NotesListFragment extends Fragment {
         binding.createNoteButton.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Type in note's title");
-            final EditText input = new EditText(getContext());
-            input.setInputType(InputType.TYPE_CLASS_TEXT);
-            builder.setView(input);
+            final View noteDialogLayout = getLayoutInflater().inflate(R.layout.create_note_dialog, null);
+            EditText noteNameET = noteDialogLayout.findViewById(R.id.createNoteName);
+            Spinner noteColorSpinner = noteDialogLayout.findViewById(R.id.chooseNoteColor);
+            ColorSpinnerAdapter noteColorAdapter = new ColorSpinnerAdapter(getContext(), Const.getCardColorList());
+            noteColorSpinner.setAdapter(noteColorAdapter);
+            noteColorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    noteColor = (Integer)noteColorAdapter.getItem(position);
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+            builder.setView(noteDialogLayout);
             builder.setPositiveButton("OK", (dialog, which) -> {
-                noteName = input.getText().toString();
+                noteName = noteNameET.getText().toString();
                 NoteDC noteDC = new NoteDC();
                 noteDC.setName(noteName);
                 noteDC.setSubject(subjectId);
+                noteDC.setColor(noteColor);
                 FirebaseDatabase.getInstance(FIREBASE_DATABASE_URL).getReference(firebaseReference)
                         .child("Notes").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

@@ -1,4 +1,4 @@
-package com.jkucharski.studentnotes;
+package com.jkucharski.studentnotes.model;
 
 public class UserDC {
     public String emailAddress;

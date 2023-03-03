@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    tools:context=".TextRecognitionFragment">
+    tools:context=".ui.editor.TextRecognitionFragment">
 
     <ImageView
         android:id="@+id/imageView"
@@ -31,7 +31,8 @@
         android:text="@string/convert_to_text"
         app:layout_constraintBottom_toTopOf="@+id/copyTestButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/captureImageButton"
